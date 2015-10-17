@@ -1,7 +1,13 @@
 package ee.ut.cs.modeling.checker.domain.petrinet.token;
 
-/**
- * Created by Erko.Risthein on 17.10.2015.
- */
+import ee.ut.cs.modeling.checker.domain.petrinet.node.Place;
+
 public class Token {
+
+	private Place place;
+
+	public Place getPlace() {
+		return place;
+	}
+
 }
