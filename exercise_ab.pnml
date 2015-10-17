@@ -1,0 +1,75 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+ <net id="n-2F0-60EE4-0" type ="http://www.pnml.org/version-2009/grammar/ptnet">
+  <name>
+   <text>exercise_ab</text>
+  </name>
+ <page id="g-2F0-60EF0-1">
+  <transition id="t-2F0-60EF6-2">
+  <name>
+   <text>A+complete</text>
+    <graphics>
+     <offset x="0" y="0" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="190" y="55"/>
+   </graphics>
+  </transition>
+  <transition id="t-2F0-60F02-3">
+  <name>
+   <text>B+complete</text>
+    <graphics>
+     <offset x="0" y="0" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="530" y="55"/>
+   </graphics>
+  </transition>
+  <place id="p-2F0-60F05-4">
+  <name>
+   <text>P 1</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="30" y="55"/>
+   </graphics>
+  </place>
+  <place id="p-2F0-60F0A-5">
+  <name>
+   <text>P 2</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="370" y="55"/>
+   </graphics>
+  </place>
+  <place id="p-2F0-60F0D-6">
+  <name>
+   <text>P 3</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="675" y="55"/>
+   </graphics>
+  </place>
+  <arc id="e-2F0-60F12-7" source="p-2F0-60F0A-5" target="t-2F0-60F02-3">
+  </arc>
+  <arc id="e-2F0-60F14-8" source="t-2F0-60F02-3" target="p-2F0-60F0D-6">
+  </arc>
+  <arc id="e-2F0-60F15-9" source="t-2F0-60EF6-2" target="p-2F0-60F0A-5">
+  </arc>
+  <arc id="e-2F0-60F17-10" source="p-2F0-60F05-4" target="t-2F0-60EF6-2">
+  </arc>
+ </page>
+ </net>
+</pnml>
