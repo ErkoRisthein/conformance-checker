@@ -24,6 +24,9 @@ dependencies {
     compile 'org.eclipse.emf:org.eclipse.emf.ecore:2.10.2-v20150123-0348'
     compile 'org.eclipse.emf:org.eclipse.emf.common:2.10.1-v20150123-0348'
 
+    compile fileTree(dir: 'libs', include: '*.jar')
+
+    compile 'com.google.guava:guava:18.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'
