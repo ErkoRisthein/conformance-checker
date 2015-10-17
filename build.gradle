@@ -3,13 +3,28 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://miage11.u-paris10.fr:8081/nexus/content/groups/public/"
+    }
 }
 
 dependencies {
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.3rdpartimports:2.2.9'
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.utils:2.2.9'
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.coremodel:2.2.9'
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.ptnet:2.2.9'
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.symmetricnet:2.2.9'
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.hlpn:2.2.9'
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.pthlpng:2.2.9'
+    compile 'fr.lip6.pnml:fr.lip6.pnml.framework.coremodel:2.2.9'
+    compile 'org.eclipse.emf:org.eclipse.emf.ecore:2.10.2-v20150123-0348'
+    compile 'org.eclipse.emf:org.eclipse.emf.common:2.10.1-v20150123-0348'
+
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'
 }
