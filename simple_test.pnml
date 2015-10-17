@@ -1,0 +1,49 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+ <net id="n-1574-E3B79-0" type ="http://www.pnml.org/version-2009/grammar/ptnet">
+  <name>
+   <text>simple_test</text>
+  </name>
+ <page id="g-1574-E3B9A-1">
+  <transition id="t-1574-E3B9F-2">
+  <name>
+   <text>A</text>
+    <graphics>
+     <offset x="0" y="0" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="105" y="55"/>
+   </graphics>
+  </transition>
+  <place id="p-1574-E3BAC-3">
+  <name>
+   <text>end</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="180" y="55"/>
+   </graphics>
+  </place>
+  <place id="p-1574-E3BB0-4">
+  <name>
+   <text>start</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="30" y="55"/>
+   </graphics>
+  </place>
+  <arc id="e-1574-E3BB8-5" source="t-1574-E3B9F-2" target="p-1574-E3BAC-3">
+  </arc>
+  <arc id="e-1574-E3BB9-6" source="p-1574-E3BB0-4" target="t-1574-E3B9F-2">
+  </arc>
+ </page>
+ </net>
+</pnml>

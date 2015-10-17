@@ -1,0 +1,8 @@
+p 30.0 55.0 start 1 n
+t 105.0 55.0 A 0 w n
+p 180.0 55.0 end 0 n
+e A end 1 n
+e start A 1 n
+h simple_test
+
+
