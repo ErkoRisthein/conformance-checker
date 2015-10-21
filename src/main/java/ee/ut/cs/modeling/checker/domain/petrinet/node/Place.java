@@ -7,11 +7,13 @@ import java.util.List;
 
 public class Place {
 
+	private String name;
 	private List<Arc> input;
 	private List<Arc> output;
 	private List<Token> tokens;
 
-	public Place(List<Arc> input, List<Arc> output) {
+	public Place(String name, List<Arc> input, List<Arc> output) {
+		this.name = name;
 		this.input = input;
 		this.output = output;
 	}

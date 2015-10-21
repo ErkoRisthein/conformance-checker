@@ -1,8 +1,17 @@
 package ee.ut.cs.modeling.checker;
 
+import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
 import ee.ut.cs.modeling.checker.parsers.PnmlImportUtils;
+import ee.ut.cs.modeling.checker.parsers.XLogReader;
+import org.deckfour.xes.extension.std.XConceptExtension;
+import org.deckfour.xes.extension.std.XLifecycleExtension;
+import org.deckfour.xes.extension.std.XTimeExtension;
+import org.deckfour.xes.model.XAttributeMap;
+import org.deckfour.xes.model.XEvent;
+import org.deckfour.xes.model.XLog;
+import org.deckfour.xes.model.XTrace;
 import org.processmining.models.connections.GraphLayoutConnection;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
@@ -67,20 +76,20 @@ public class InputConverters {
 			System.out.println(place);
 			List<Arc> inputArcs = getInputArcs(net, place);
 			List<Arc> outputArcs = getOutputArcs(net, place);
-			petriNet.setPlace(place.getLabel(),
-					new ee.ut.cs.modeling.checker.domain.petrinet.node.Place(inputArcs, outputArcs));
+			petriNet.addPlace(new ee.ut.cs.modeling.checker.domain.petrinet.node.Place(
+					place.getLabel(),
+					inputArcs,
+					outputArcs));
 		}
 
 		for (Transition transition : transitions) {
 			System.out.println(transition);
 			List<Arc> inputArcs = getInputArcs(net, transition);
 			List<Arc> outputArcs = getOutputArcs(net, transition);
-
-			petriNet.setTransition(
+			petriNet.addTransition(new ee.ut.cs.modeling.checker.domain.petrinet.node.Transition(
 					transition.getLabel(),
-					new ee.ut.cs.modeling.checker.domain.petrinet.node.Transition(
-							inputArcs,
-							outputArcs));
+					inputArcs,
+					outputArcs));
 		}
 
 		return petriNet;
@@ -117,5 +126,37 @@ public class InputConverters {
 
 		return nativeArcList(arcs);
 
+	}
+
+	public EventLog getEventLogFromFile(String fileName) {
+
+		XLog log = null;
+		try {
+			log = XLogReader.openLog("test.xes");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		for(XTrace trace:log){
+
+			String traceName = XConceptExtension.instance().extractName(trace);
+			XAttributeMap caseAttributes = trace.getAttributes();
+			for(XEvent event : trace){
+				String activityName = XConceptExtension.instance().extractName(event);
+				Date timestamp = XTimeExtension.instance().extractTimestamp(event);
+
+				String eventType = XLifecycleExtension.instance().extractTransition(event);
+				XAttributeMap eventAttributes = event.getAttributes();
+
+				for(String key :eventAttributes.keySet()){
+					String value = eventAttributes.get(key).toString();
+				}
+				for(String key :caseAttributes.keySet()){
+					String value = caseAttributes.get(key).toString();
+				}
+			}
+		}
+
+		return null;
 	}
 }

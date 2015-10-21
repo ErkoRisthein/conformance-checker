@@ -4,14 +4,14 @@ import ee.ut.cs.modeling.checker.domain.petrinet.node.Transition;
 
 public final class Event {
 
-	private final Transition transition;
+	private final String name;
 
-	public Event(Transition transition) {
-		this.transition = transition;
+	public Event(String name) {
+		this.name = name;
 	}
 
-	public Transition getTransition() {
-		return transition;
+	public String getName() {
+		return name;
 	}
 
 }

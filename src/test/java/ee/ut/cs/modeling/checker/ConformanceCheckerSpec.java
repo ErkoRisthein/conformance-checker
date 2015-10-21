@@ -1,5 +1,6 @@
 package ee.ut.cs.modeling.checker;
 
+import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.parsers.PnmlImportUtils;
 
@@ -67,26 +68,6 @@ public class ConformanceCheckerSpec {
 
 	}
 
-	@Test
-	public void testImportXes() throws Exception {
-		XLog log = XLogReader.openLog("test.xes");
-		for(XTrace trace:log){
-			String traceName = XConceptExtension.instance().extractName(trace);
-			XAttributeMap caseAttributes = trace.getAttributes();
-			for(XEvent event : trace){
-				String activityName = XConceptExtension.instance().extractName(event);
-				Date timestamp = XTimeExtension.instance().extractTimestamp(event);
-				String eventType = XLifecycleExtension.instance().extractTransition(event);
-				XAttributeMap eventAttributes = event.getAttributes();
-				for(String key :eventAttributes.keySet()){
-					String value = eventAttributes.get(key).toString();
-				}
-				for(String key :caseAttributes.keySet()){
-					String value = caseAttributes.get(key).toString();
-				}
-			}
-		}
-	}
 
 	@Test
 	public void testPetriNetGeneration() throws Exception {
@@ -96,6 +77,17 @@ public class ConformanceCheckerSpec {
 		InputConverters converters = new InputConverters();
 
 		PetriNet petriNet = converters.getPetriNetFromFile(f);
+
+
+
+	}
+
+	@Test
+	public void testEventLogGeneration() throws Exception {
+
+		InputConverters converters = new InputConverters();
+
+		EventLog eventLog = converters.getEventLogFromFile("test.xes");
 
 
 
