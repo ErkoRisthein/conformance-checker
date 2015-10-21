@@ -1,5 +1,6 @@
 package ee.ut.cs.modeling.checker;
 
+import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.parsers.PnmlImportUtils;
 
 import ee.ut.cs.modeling.checker.parsers.XLogReader;
@@ -87,5 +88,16 @@ public class ConformanceCheckerSpec {
 		}
 	}
 
+	@Test
+	public void testPetriNetGeneration() throws Exception {
 
+		File f = new File ("test.pnml");
+
+		InputConverters converters = new InputConverters();
+
+		PetriNet petriNet = converters.getPetriNetFromFile(f);
+
+
+
+	}
 }

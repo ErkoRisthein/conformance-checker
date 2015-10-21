@@ -1,21 +1,27 @@
 package ee.ut.cs.modeling.checker.domain.petrinet.node;
 
-import ee.ut.cs.modeling.checker.domain.petrinet.arc.P2TArc;
-import ee.ut.cs.modeling.checker.domain.petrinet.arc.T2PArc;
+import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
 
-public class Transition implements Node {
+import java.util.List;
 
-	private P2TArc input;
-	private T2PArc output;
+public class Transition {
 
-	@Override
-	public P2TArc getInput() {
+	private List<Arc> input;
+	private List<Arc> output;
+
+
+	public Transition(List<Arc> input, List<Arc> output) {
+		this.input = input;
+		this.output = output;
+	}
+
+	public List<Arc> getInputs() {
 		return input;
 	}
 
-	@Override
-	public T2PArc getOutput() {
+	public List<Arc> getOutputs() {
 		return output;
 	}
+
 
 }

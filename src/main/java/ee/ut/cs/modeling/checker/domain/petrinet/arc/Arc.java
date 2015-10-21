@@ -1,10 +1,20 @@
 package ee.ut.cs.modeling.checker.domain.petrinet.arc;
 
-import ee.ut.cs.modeling.checker.domain.petrinet.node.Node;
+public class Arc {
 
-public interface Arc {
+	private String from;
+	private String to;
 
-	Node getFrom();
-	Node getTo();
+	public Arc(String from, String to) {
+		this.from = from;
+		this.to = to;
+	}
 
+	public String getTo() {
+		return to;
+	}
+
+	public String getFrom() {
+		return from;
+	}
 }
