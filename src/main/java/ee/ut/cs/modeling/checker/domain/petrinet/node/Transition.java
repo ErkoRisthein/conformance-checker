@@ -2,30 +2,35 @@ package ee.ut.cs.modeling.checker.domain.petrinet.node;
 
 import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
 
-import java.util.List;
+import java.util.Set;
 
 public class Transition {
 
-	private String event;
-	private List<Arc> input;
-	private List<Arc> output;
+	private String name;
+	private Set<Arc> inputs;
+	private Set<Arc> outputs;
 
-	public Transition(String event, List<Arc> input, List<Arc> output) {
-		this.event = event;
-		this.input = input;
-		this.output = output;
+	public Transition(String name, Set<Arc> inputs, Set<Arc> outputs) {
+		this.name = name;
+		this.inputs = inputs;
+		this.outputs = outputs;
 	}
 
-	public List<Arc> getInputs() {
-		return input;
+	public String getName() {
+		return name;
 	}
 
-	public List<Arc> getOutputs() {
-		return output;
+	public Set<Arc> getInputs() {
+		return inputs;
+	}
+
+	public Set<Arc> getOutputs() {
+		return outputs;
 	}
 
 	@Override
 	public String toString() {
-		return input + "->" + event + "->" + output;
+		return inputs + "->" + name + "->" + outputs;
 	}
+
 }

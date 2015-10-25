@@ -1,34 +1,60 @@
 package ee.ut.cs.modeling.checker.domain.petrinet.node;
 
 import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
-import ee.ut.cs.modeling.checker.domain.petrinet.token.Token;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class Place {
 
 	private String name;
-	private List<Arc> input;
-	private List<Arc> output;
-	private List<Token> tokens = new ArrayList<>();
+	private Set<Arc> inputs;
+	private Set<Arc> outputs;
+	private int tokens;
 
-	public Place(String name, List<Arc> input, List<Arc> output) {
+	public Place(String name, Set<Arc> inputs, Set<Arc> outputs) {
 		this.name = name;
-		this.input = input;
-		this.output = output;
+		this.inputs = inputs;
+		this.outputs = outputs;
 	}
 
-	public List<Arc> getInputs() {
-		return input;
+	public String getName() {
+		return name;
 	}
 
-	public List<Arc> getOutputs() {
-		return output;
+	public Set<Arc> getInputs() {
+		return inputs;
+	}
+
+	public Set<Arc> getOutputs() {
+		return outputs;
+	}
+
+	public void addToken() {
+		tokens++;
+	}
+
+	public boolean hasTokens() {
+		return tokens > 0;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Place place = (Place) o;
+		return Objects.equals(name, place.name) &&
+				Objects.equals(inputs, place.inputs) &&
+				Objects.equals(outputs, place.outputs);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, inputs, outputs);
 	}
 
 	@Override
 	public String toString() {
-		return input + "->" + name + tokens + "->" + output;
+		return inputs + "->" + name + tokens + "->" + outputs;
 	}
 }

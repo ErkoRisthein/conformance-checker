@@ -32,19 +32,19 @@ public class TraceParameters {
 		count++;
 	}
 
-	public void setMissing() {
+	public void incrementMissing() {
 		missing++;
 	}
 
-	public void setRemaining() {
+	public void incrementRemaining() {
 		remaining++;
 	}
 
-	public void setConsumed() {
+	public void incrementConsumed() {
 		consumed++;
 	}
 
-	public void setProduced() {
+	public void incrementProduced() {
 		produced++;
 	}
 

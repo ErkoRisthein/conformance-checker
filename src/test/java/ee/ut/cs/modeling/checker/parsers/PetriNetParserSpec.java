@@ -1,14 +1,27 @@
 package ee.ut.cs.modeling.checker.parsers;
 
+import com.google.common.collect.ImmutableSet;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
+import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
+import ee.ut.cs.modeling.checker.domain.petrinet.node.Place;
 import org.junit.Test;
+
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class PetriNetParserSpec {
 
-	PetriNetParser converters = new PetriNetParser();
+	PetriNetParser petriNetParser = new PetriNetParser();
 
 	@Test
-	public void testPetriNetGeneration() {
-		PetriNet petriNet = converters.getPetriNetFromFile("test.pnml");
+	public void testPetriNetEndAndStartParsing() {
+		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
+
+		Place expectedStart = new Place("p1", ImmutableSet.<Arc>of(), ImmutableSet.of(new Arc("p1", "A")));
+		Place expectedEnd =  new Place("p5", ImmutableSet.of(new Arc("D", "p5"),new Arc("E", "p5")),  ImmutableSet.<Arc>of());
+
+		assertThat(petriNet.getStart(), equalTo(expectedStart));
+		assertThat(petriNet.getEnd(), equalTo(expectedEnd));
+
 	}
 }
