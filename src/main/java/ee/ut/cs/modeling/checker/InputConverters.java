@@ -1,14 +1,14 @@
 package ee.ut.cs.modeling.checker;
 
+import ee.ut.cs.modeling.checker.domain.eventlog.Event;
 import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
+import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
 import ee.ut.cs.modeling.checker.parsers.PnmlImportUtils;
 import ee.ut.cs.modeling.checker.parsers.XLogReader;
 import org.deckfour.xes.extension.std.XConceptExtension;
-import org.deckfour.xes.extension.std.XLifecycleExtension;
-import org.deckfour.xes.extension.std.XTimeExtension;
-import org.deckfour.xes.model.XAttributeMap;
+import org.deckfour.xes.model.XAttributable;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
@@ -26,11 +26,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-/**
- * Created by robert on 21.10.15.
- */
 public class InputConverters {
 
 	public PetriNet getPetriNetFromFile(File f) {
@@ -51,7 +50,7 @@ public class InputConverters {
 		}
 		PetrinetGraph net = PetrinetFactory.newInhibitorNet(pnml.getLabel() + " (imported from " + f.getName() + ")");
 		Marking marking = new Marking();
-		pnml.convertToNet(net,marking ,new GraphLayoutConnection(net));
+		pnml.convertToNet(net, marking, new GraphLayoutConnection(net));
 
 		Collection<Place> places = net.getPlaces();
 		Collection<Transition> transitions = net.getTransitions();
@@ -129,34 +128,27 @@ public class InputConverters {
 	}
 
 	public EventLog getEventLogFromFile(String fileName) {
+		EventLog eventLog = new EventLog();
 
-		XLog log = null;
 		try {
-			log = XLogReader.openLog("test.xes");
+			//List<XTrace>
+			XLog xLog = XLogReader.openLog(fileName);
+			for (XTrace xTrace : xLog) {
+				Trace trace = new Trace();
+				for (XEvent xEvent : xTrace) {
+					Event event = new Event(name(xEvent));
+					trace.addEvent(event);
+				}
+				eventLog.addTrace(trace);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		for(XTrace trace:log){
+		return eventLog;
+	}
 
-			String traceName = XConceptExtension.instance().extractName(trace);
-			XAttributeMap caseAttributes = trace.getAttributes();
-			for(XEvent event : trace){
-				String activityName = XConceptExtension.instance().extractName(event);
-				Date timestamp = XTimeExtension.instance().extractTimestamp(event);
-
-				String eventType = XLifecycleExtension.instance().extractTransition(event);
-				XAttributeMap eventAttributes = event.getAttributes();
-
-				for(String key :eventAttributes.keySet()){
-					String value = eventAttributes.get(key).toString();
-				}
-				for(String key :caseAttributes.keySet()){
-					String value = caseAttributes.get(key).toString();
-				}
-			}
-		}
-
-		return null;
+	private String name(XAttributable xAttributable) {
+		return XConceptExtension.instance().extractName(xAttributable);
 	}
 }
