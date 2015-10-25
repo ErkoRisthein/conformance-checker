@@ -26,6 +26,12 @@ public class ConformanceChecker {
 		return calculateSimpleBehavioralAppropriateness();
 	}
 
+	public double getSimpleStructuralAppropriateness(PetriNet petriNet) {
+		double L = petriNet.countTransitions();
+		double N = L + petriNet.countPlaces();
+		return (L + 2) / N;
+	}
+
 	EventLog replayLog(PetriNet petriNet, EventLog eventLog) {
 		this.petriNet = petriNet;
 		this.eventLog = eventLog;

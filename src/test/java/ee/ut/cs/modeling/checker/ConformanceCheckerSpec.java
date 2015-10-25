@@ -53,7 +53,7 @@ public class ConformanceCheckerSpec {
 
 	@Test
 	public void getFitnessExtra() {
-		assertFitness("test_extra.xes", 0.94d);
+		assertFitness("test_extra.xes", 0.94);
 	}
 
 	@Test
@@ -85,7 +85,15 @@ public class ConformanceCheckerSpec {
 		double sba = conformanceChecker.getSimpleBehavioralAppropriateness(petriNet, eventLog);
 
 		assertThat(sba, is(closeTo(0.9236111, 0.0000001)));
+	}
 
+	@Test
+	public void getSimpleStructuralAppropriateness() {
+		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
+
+		double ssa = conformanceChecker.getSimpleStructuralAppropriateness(petriNet);
+
+		assertThat(ssa, is(equalTo(0.7)));
 	}
 
 	private void replayLog(String eventLogFilename) {
@@ -110,12 +118,12 @@ public class ConformanceCheckerSpec {
 		assertThat(fitness, is(equalTo(expectedFitness)));
 	}
 
-	private void assertParams(TraceParameters abcdTraceParameters, int missing, int remaining, int consumed, int produced, int count) {
-		assertThat(abcdTraceParameters.getMissing(), is(equalTo(missing)));
-		assertThat(abcdTraceParameters.getRemaining(), is(equalTo(remaining)));
-		assertThat(abcdTraceParameters.getConsumed(), is(equalTo(consumed)));
-		assertThat(abcdTraceParameters.getProduced(), is(equalTo(produced)));
-		assertThat(abcdTraceParameters.getCount(), is(equalTo(count)));
+	private void assertParams(TraceParameters traceParameters, int missing, int remaining, int consumed, int produced, int count) {
+		assertThat(traceParameters.getMissing(), is(equalTo(missing)));
+		assertThat(traceParameters.getRemaining(), is(equalTo(remaining)));
+		assertThat(traceParameters.getConsumed(), is(equalTo(consumed)));
+		assertThat(traceParameters.getProduced(), is(equalTo(produced)));
+		assertThat(traceParameters.getCount(), is(equalTo(count)));
 	}
 
 	private Trace trace(String... events) {

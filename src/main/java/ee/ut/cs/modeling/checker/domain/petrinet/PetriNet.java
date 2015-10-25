@@ -112,6 +112,10 @@ public class PetriNet {
 		return transitions.size();
 	}
 
+	public int countPlaces() {
+		return places.size();
+	}
+
 	public void addStartToken() {
 		start.addToken();
 	}
