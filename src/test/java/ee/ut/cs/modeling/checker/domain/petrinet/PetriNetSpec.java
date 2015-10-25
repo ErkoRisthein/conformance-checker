@@ -6,6 +6,7 @@ import ee.ut.cs.modeling.checker.domain.petrinet.node.Place;
 import ee.ut.cs.modeling.checker.domain.petrinet.node.Transition;
 import org.junit.Test;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -18,7 +19,7 @@ public class PetriNetSpec {
 		petriNet.addPlace(new Place("p1", noArc(), arc("p1", "A")));
 		petriNet.addTransition(new Transition("A", arc("p1", "A"),  arc("A", "p2")));
 
-		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(false));
+		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(false)));
 	}
 
 	@Test
@@ -32,7 +33,7 @@ public class PetriNetSpec {
 		petriNet.addPlace(place);
 		petriNet.addTransition(transition);
 
-		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(true));
+		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(true)));
 	}
 
 	@Test
@@ -41,9 +42,9 @@ public class PetriNetSpec {
 		petriNet.addPlace(new Place("p1", noArc(), arc("p1", "A")));
 		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2")));
 
-		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(false));
+		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(false)));
 		petriNet.createMissingToken("A");
-		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(true));
+		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(true)));
 	}
 
 	@Test
@@ -57,9 +58,9 @@ public class PetriNetSpec {
 		petriNet.addPlace(place);
 		petriNet.addTransition(transition);
 
-		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(true));
+		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(true)));
 		petriNet.consumeInputTokens("A");
-		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(false));
+		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(false)));
 	}
 
 	@Test
@@ -74,9 +75,9 @@ public class PetriNetSpec {
 		Place outputPlace = new Place("p2", arc("A", "p2"), noArc());
 		petriNet.addPlace(outputPlace);
 
-		assertThat(outputPlace.hasTokens(), equalTo(false));
+		assertThat(outputPlace.hasTokens(), is(equalTo(false)));
 		petriNet.produceOutputTokens("A");
-		assertThat(outputPlace.hasTokens(), equalTo(true));
+		assertThat(outputPlace.hasTokens(), is(equalTo(true)));
 	}
 
 	@Test
@@ -85,7 +86,7 @@ public class PetriNetSpec {
 		petriNet.addPlace(new Place("p1", noArc(), arc("p1", "A")));
 		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2")));
 
-		assertThat(petriNet.countRemainingTokens(), equalTo(0));
+		assertThat(petriNet.countRemainingTokens(), is(equalTo(0)));
 	}
 
 	@Test
@@ -98,7 +99,7 @@ public class PetriNetSpec {
 
 		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2")));
 
-		assertThat(petriNet.countRemainingTokens(), equalTo(1));
+		assertThat(petriNet.countRemainingTokens(), is(equalTo(1)));
 	}
 
 	@Test
@@ -111,9 +112,31 @@ public class PetriNetSpec {
 
 		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2")));
 
-		assertThat(petriNet.countRemainingTokens(), equalTo(1));
+		assertThat(petriNet.countRemainingTokens(), is(equalTo(1)));
 		petriNet.cleanUpRemainingTokens();
-		assertThat(petriNet.countRemainingTokens(), equalTo(0));
+		assertThat(petriNet.countRemainingTokens(), is(equalTo(0)));
+	}
+
+	@Test
+	public void countEnabledTransitionsIsZero() {
+		PetriNet petriNet = new PetriNet();
+
+		petriNet.addPlace(new Place("p1", noArc(), arc("p1", "A")));
+		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2")));
+
+		assertThat(petriNet.countEnabledTransitions(), is(equalTo(0)));
+	}
+
+	@Test
+	public void countEnabledTransitionsIsOne() {
+		PetriNet petriNet = new PetriNet();
+
+		Place place = new Place("p1", noArc(), arc("p1", "A"));
+		place.addToken();
+		petriNet.addPlace(place);
+		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2")));
+
+		assertThat(petriNet.countEnabledTransitions(), is(equalTo(1)));
 	}
 
 	private ImmutableSet<Arc> noArc() {

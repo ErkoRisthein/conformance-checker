@@ -45,8 +45,8 @@ public class PetriNet {
 	public boolean transitionHasAllInputTokens(String transitionName) {
 		for (Arc input : getInputs(transitionName)) {
 			String placeName = input.getFrom();
-			if(!places.get(placeName).hasTokens()) {
-				 return false;
+			if (!places.get(placeName).hasTokens()) {
+				return false;
 			}
 		}
 		return true;
@@ -96,6 +96,20 @@ public class PetriNet {
 		for (Place place : places.values()) {
 			place.removeAllTokens();
 		}
+	}
+
+	public int countEnabledTransitions() {
+		int count = 0;
+		for (Place place : places.values()) {
+			if (place.hasTokens()) {
+				count += place.getOutputCount();
+			}
+		}
+		return count;
+	}
+
+	public int countTransitions() {
+		return transitions.size();
 	}
 
 	public void addStartToken() {

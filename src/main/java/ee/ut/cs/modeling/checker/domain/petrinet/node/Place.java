@@ -30,6 +30,10 @@ public class Place {
 		return outputs;
 	}
 
+	public int getOutputCount() {
+		return outputs.size();
+	}
+
 	public int getTokenCount() {
 		return tokens;
 	}

@@ -1,5 +1,8 @@
 package ee.ut.cs.modeling.checker.domain.eventlog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TraceParameters {
 
 	private int count;
@@ -7,6 +10,7 @@ public class TraceParameters {
 	private int remaining;
 	private int consumed;
 	private int produced;
+	private List<Integer> enabledTransitions = new ArrayList<>();
 
 	public int getCount() {
 		return count;
@@ -46,6 +50,18 @@ public class TraceParameters {
 
 	public void incrementProduced() {
 		produced++;
+	}
+
+	public void addEnabledTransition(Integer count) {
+		enabledTransitions.add(count);
+	}
+
+	public double getMeanEnabledTransitions() {
+		double sum = 0d;
+		for (Integer c : enabledTransitions) {
+			sum += c;
+		}
+		return sum / enabledTransitions.size();
 	}
 
 	@Override

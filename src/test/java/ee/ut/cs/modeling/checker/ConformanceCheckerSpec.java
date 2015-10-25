@@ -18,7 +18,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.number.IsCloseTo.closeTo;
 
 
 public class ConformanceCheckerSpec {
@@ -58,21 +60,32 @@ public class ConformanceCheckerSpec {
 	public void replayMultiInputOutputPetriNet() {
 		PetriNet petriNet = new PetriNet();
 
-		petriNet.addPlace(new Place("p1", noArc(), arc("p1", "A")));
-		petriNet.addPlace(new Place("p2", arc("A", "p2"), arc("p2", "B")));
-		petriNet.addPlace(new Place("p3", arc("A", "p3"), arc("p3", "B")));
-		petriNet.addPlace(new Place("p4", arc("A", "p4"), arc("p4", "B")));
-		petriNet.addPlace(new Place("p5", arc("B", "p5"), noArc()));
+		petriNet.addPlace(new Place("p1", noArc(), arcs("p1", "A")));
+		petriNet.addPlace(new Place("p2", arcs("A", "p2"), arcs("p2", "B")));
+		petriNet.addPlace(new Place("p3", arcs("A", "p3"), arcs("p3", "B")));
+		petriNet.addPlace(new Place("p4", arcs("A", "p4"), arcs("p4", "B")));
+		petriNet.addPlace(new Place("p5", arcs("B", "p5"), noArc()));
 
-		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2", "A", "p3", "A", "p4")));
-		petriNet.addTransition(new Transition("B", arc("p2", "B", "p3", "B", "p4", "B"), arc("B", "p5")));
+		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2", "A", "p3", "A", "p4")));
+		petriNet.addTransition(new Transition("B", arcs("p2", "B", "p3", "B", "p4", "B"), arcs("B", "p5")));
 
 		EventLog eventLog = new EventLog();
 		eventLog.addTrace(trace("A", "B"));
 
 		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
 
-		assertThat(fitness, equalTo(1d));
+		assertThat(fitness, is(equalTo(1d)));
+	}
+
+	@Test
+	public void getSimpleBehavioralAppropriateness() {
+		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
+		EventLog eventLog = eventLogParser.getEventLogFromFile("test.xes");
+
+		double sba = conformanceChecker.getSimpleBehavioralAppropriateness(petriNet, eventLog);
+
+		assertThat(sba, is(closeTo(0.9236111, 0.0000001)));
+
 	}
 
 	private void replayLog(String eventLogFilename) {
@@ -94,15 +107,15 @@ public class ConformanceCheckerSpec {
 
 		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
 
-		assertThat(fitness, equalTo(expectedFitness));
+		assertThat(fitness, is(equalTo(expectedFitness)));
 	}
 
 	private void assertParams(TraceParameters abcdTraceParameters, int missing, int remaining, int consumed, int produced, int count) {
-		assertThat(abcdTraceParameters.getMissing(), equalTo(missing));
-		assertThat(abcdTraceParameters.getRemaining(), equalTo(remaining));
-		assertThat(abcdTraceParameters.getConsumed(), equalTo(consumed));
-		assertThat(abcdTraceParameters.getProduced(), equalTo(produced));
-		assertThat(abcdTraceParameters.getCount(), equalTo(count));
+		assertThat(abcdTraceParameters.getMissing(), is(equalTo(missing)));
+		assertThat(abcdTraceParameters.getRemaining(), is(equalTo(remaining)));
+		assertThat(abcdTraceParameters.getConsumed(), is(equalTo(consumed)));
+		assertThat(abcdTraceParameters.getProduced(), is(equalTo(produced)));
+		assertThat(abcdTraceParameters.getCount(), is(equalTo(count)));
 	}
 
 	private Trace trace(String... events) {
@@ -117,7 +130,7 @@ public class ConformanceCheckerSpec {
 		return ImmutableSet.of();
 	}
 
-	private Set<Arc> arc(String... arcParams) {
+	private Set<Arc> arcs(String... arcParams) {
 		HashSet<Arc> arcs = new HashSet<>();
 
 		for (int i = 0; i < arcParams.length; i += 2) {

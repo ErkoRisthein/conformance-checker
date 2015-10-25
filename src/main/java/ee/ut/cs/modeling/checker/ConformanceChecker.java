@@ -14,14 +14,22 @@ public class ConformanceChecker {
 	private Trace trace;
 	private TraceParameters params;
 	private String transitionName;
+	private EventLog eventLog;
 
 	public double getFitness(PetriNet petriNet, EventLog eventLog) {
 		replayLog(petriNet, eventLog);
-		return calculateFitness(eventLog);
+		return calculateFitness();
+	}
+
+	public double getSimpleBehavioralAppropriateness(PetriNet petriNet, EventLog eventLog) {
+		replayLog(petriNet, eventLog);
+		return calculateSimpleBehavioralAppropriateness();
 	}
 
 	EventLog replayLog(PetriNet petriNet, EventLog eventLog) {
 		this.petriNet = petriNet;
+		this.eventLog = eventLog;
+
 		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getAggregatedTraces().entrySet()) {
 			trace = entry.getKey();
 			params = entry.getValue();
@@ -56,10 +64,15 @@ public class ConformanceChecker {
 	private void replayEvents() {
 		for (Event event : trace.getTrace()) {
 			transitionName = event.getName();
+			addEnabledTransition();
 			createMissingTokensIfNeeded();
 			consumeInputTokens();
 			produceOutputTokens();
 		}
+	}
+
+	private void addEnabledTransition() {
+		params.addEnabledTransition(petriNet.countEnabledTransitions());
 	}
 
 	private void createMissingTokensIfNeeded() {
@@ -84,7 +97,7 @@ public class ConformanceChecker {
 		params.incrementProduced();
 	}
 
-	private double calculateFitness(EventLog eventLog) {
+	private double calculateFitness() {
 		double aggregatedMissing = 0f;
 		double aggregatedRemaining = 0f;
 		double aggregatedConsumed = 0f;
@@ -102,4 +115,21 @@ public class ConformanceChecker {
 		return 0.5 * (1 - (aggregatedMissing / aggregatedConsumed)) + 0.5 * (1 - (aggregatedRemaining / aggregatedProduced));
 	}
 
+	private double calculateSimpleBehavioralAppropriateness() {
+		int Tv = petriNet.countTransitions();
+		double sum1 = 0d;
+		double sum2 = 0d;
+
+		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getAggregatedTraces().entrySet()) {
+			TraceParameters params = entry.getValue();
+
+			int ni = params.getCount();
+			double xi = params.getMeanEnabledTransitions();
+
+			sum1 += ni * (Tv - xi);
+			sum2 += ni;
+		}
+
+		return sum1 / ((Tv - 1) * sum2);
+	}
 }
