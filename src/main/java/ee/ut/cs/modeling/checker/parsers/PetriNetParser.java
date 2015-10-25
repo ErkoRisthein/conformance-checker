@@ -25,7 +25,7 @@ public class PetriNetParser {
 	public PetriNet getPetriNetFromFile(String fileName) {
 		File f = new File (fileName);
 
-		PnmlImportUtils ut = new PnmlImportUtils();
+		PnmlImportUtils pnmlImportUtils = new PnmlImportUtils();
 
 		InputStream input = null;
 		try {
@@ -35,7 +35,7 @@ public class PetriNetParser {
 		}
 		Pnml pnml = null;
 		try {
-			pnml = ut.importPnmlFromStream(input, f.getName(), f.length());
+			pnml = pnmlImportUtils.importPnmlFromStream(input, f.getName(), f.length());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

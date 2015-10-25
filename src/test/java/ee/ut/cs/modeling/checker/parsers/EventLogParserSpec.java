@@ -21,7 +21,7 @@ public class EventLogParserSpec {
 	}
 
 	private Integer count(EventLog eventLog, Trace trace) {
-		return eventLog.getAggregatedTraces().get(trace);
+		return eventLog.getAggregatedTraces().get(trace).getCount();
 	}
 
 	private Trace trace(String... events) {
