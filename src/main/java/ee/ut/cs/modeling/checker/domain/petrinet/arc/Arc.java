@@ -17,4 +17,9 @@ public class Arc {
 	public String getFrom() {
 		return from;
 	}
+
+	@Override
+	public String toString() {
+		return from + "-" + to;
+	}
 }

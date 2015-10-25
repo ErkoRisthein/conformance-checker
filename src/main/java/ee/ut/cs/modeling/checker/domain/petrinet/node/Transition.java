@@ -10,7 +10,6 @@ public class Transition {
 	private List<Arc> input;
 	private List<Arc> output;
 
-
 	public Transition(String event, List<Arc> input, List<Arc> output) {
 		this.event = event;
 		this.input = input;
@@ -25,5 +24,8 @@ public class Transition {
 		return output;
 	}
 
-
+	@Override
+	public String toString() {
+		return input + "->" + event + "->" + output;
+	}
 }

@@ -3,6 +3,7 @@ package ee.ut.cs.modeling.checker.domain.petrinet.node;
 import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
 import ee.ut.cs.modeling.checker.domain.petrinet.token.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Place {
@@ -10,7 +11,7 @@ public class Place {
 	private String name;
 	private List<Arc> input;
 	private List<Arc> output;
-	private List<Token> tokens;
+	private List<Token> tokens = new ArrayList<>();
 
 	public Place(String name, List<Arc> input, List<Arc> output) {
 		this.name = name;
@@ -26,5 +27,8 @@ public class Place {
 		return output;
 	}
 
-
+	@Override
+	public String toString() {
+		return input + "->" + name + tokens + "->" + output;
+	}
 }

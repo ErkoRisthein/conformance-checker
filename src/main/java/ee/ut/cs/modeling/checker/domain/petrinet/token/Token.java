@@ -10,4 +10,8 @@ public class Token {
 		return place;
 	}
 
+	@Override
+	public String toString() {
+		return "*";
+	}
 }
