@@ -19,7 +19,6 @@ public class PetriNetSpec {
 		petriNet.addTransition(new Transition("A", arc("p1", "A"),  arc("A", "p2")));
 
 		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(false));
-
 	}
 
 	@Test
@@ -34,7 +33,6 @@ public class PetriNetSpec {
 		petriNet.addTransition(transition);
 
 		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(true));
-
 	}
 
 	@Test
@@ -46,7 +44,6 @@ public class PetriNetSpec {
 		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(false));
 		petriNet.createMissingToken("A");
 		assertThat(petriNet.transitionHasAllInputTokens("A"), equalTo(true));
-
 	}
 
 	@Test
