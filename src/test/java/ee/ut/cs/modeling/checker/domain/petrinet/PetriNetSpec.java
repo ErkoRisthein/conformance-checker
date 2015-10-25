@@ -104,6 +104,21 @@ public class PetriNetSpec {
 		assertThat(petriNet.countRemainingTokens(), equalTo(1));
 	}
 
+	@Test
+	public void cleanUpRemainingTokens() {
+		PetriNet petriNet = new PetriNet();
+
+		Place place = new Place("p1", noArc(), arc("p1", "A"));
+		petriNet.addPlace(place);
+		place.addToken();
+
+		petriNet.addTransition(new Transition("A", arc("p1", "A"), arc("A", "p2")));
+
+		assertThat(petriNet.countRemainingTokens(), equalTo(1));
+		petriNet.cleanUpRemainingTokens();
+		assertThat(petriNet.countRemainingTokens(), equalTo(0));
+	}
+
 	private ImmutableSet<Arc> noArc() {
 		return ImmutableSet.of();
 	}

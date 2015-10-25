@@ -13,11 +13,22 @@ public class EventLogParserSpec {
 	EventLogParser eventLogParser = new EventLogParser();
 
 	@Test
-	public void getEventLogFromFile() {
+	public void getEventLogFromDefaultFile() {
 		EventLog eventLog = eventLogParser.getEventLogFromFile("test.xes");
 
 		assertThat(count(eventLog, trace("A", "B", "E")), equalTo(6));
 		assertThat(count(eventLog, trace("A", "B", "C", "D")), equalTo(3));
+	}
+
+	@Test
+	public void getEventLogFromExtraFile() {
+		EventLog eventLog = eventLogParser.getEventLogFromFile("test_extra.xes");
+
+		assertThat(count(eventLog, trace("A", "B", "E")), equalTo(6));
+		assertThat(count(eventLog, trace("A", "B", "C", "D")), equalTo(3));
+		assertThat(count(eventLog, trace("A", "B", "D")), equalTo(1));
+		assertThat(count(eventLog, trace("A", "B", "C")), equalTo(1));
+		assertThat(count(eventLog, trace("A", "E")), equalTo(1));
 	}
 
 	private Integer count(EventLog eventLog, Trace trace) {

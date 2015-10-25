@@ -92,6 +92,12 @@ public class PetriNet {
 		return count;
 	}
 
+	public void cleanUpRemainingTokens() {
+		for (Place place : places.values()) {
+			place.removeAllTokens();
+		}
+	}
+
 	public void addStartToken() {
 		start.addToken();
 	}
@@ -102,6 +108,10 @@ public class PetriNet {
 
 	public void removeEndToken() {
 		end.removeToken();
+	}
+
+	public void addEndToken() {
+		end.addToken();
 	}
 
 	@Override

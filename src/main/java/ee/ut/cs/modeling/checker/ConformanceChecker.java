@@ -41,13 +41,16 @@ public class ConformanceChecker {
 	private void setRemainingTokens() {
 		int remainingTokens = petriNet.countRemainingTokens();
 		params.setRemaining(remainingTokens);
+		petriNet.cleanUpRemainingTokens();
 	}
 
 	private void consumeEndToken() {
-		if (petriNet.hasEndToken()) {
-			petriNet.removeEndToken();
-			params.incrementConsumed();
+		if (!petriNet.hasEndToken()) {
+			petriNet.addEndToken();
+			params.incrementMissing();
 		}
+		petriNet.removeEndToken();
+		params.incrementConsumed();
 	}
 
 	private void replayEvents() {

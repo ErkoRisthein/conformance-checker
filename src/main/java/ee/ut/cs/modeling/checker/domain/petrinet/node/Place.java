@@ -30,6 +30,10 @@ public class Place {
 		return outputs;
 	}
 
+	public int getTokenCount() {
+		return tokens;
+	}
+
 	public void addToken() {
 		tokens++;
 	}
@@ -42,8 +46,8 @@ public class Place {
 		tokens--;
 	}
 
-	public int getTokenCount() {
-		return tokens;
+	public void removeAllTokens() {
+		tokens = 0;
 	}
 
 	@Override
@@ -63,6 +67,6 @@ public class Place {
 
 	@Override
 	public String toString() {
-		return inputs + "->" + name + tokens + "->" + outputs;
+		return inputs + "->" + name + "(" + tokens + ")->" + outputs;
 	}
 }
