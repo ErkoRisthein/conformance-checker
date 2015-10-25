@@ -1,4 +1,4 @@
-package ee.ut.cs.modeling.checker;
+package ee.ut.cs.modeling.checker.parsers;
 
 import ee.ut.cs.modeling.checker.domain.eventlog.Event;
 import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
@@ -8,18 +8,13 @@ import org.junit.Test;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class InputConvertersSpec {
+public class EventLogParserSpec {
 
-	InputConverters converters = new InputConverters();
-
-	@Test
-	public void getPetriNetFromFile() {
-
-	}
+	EventLogParser eventLogParser = new EventLogParser();
 
 	@Test
 	public void getEventLogFromFile() {
-		EventLog eventLog = converters.getEventLogFromFile("test.xes");
+		EventLog eventLog = eventLogParser.getEventLogFromFile("test.xes");
 
 		assertThat(count(eventLog, trace("A", "B", "E")), equalTo(6));
 		assertThat(count(eventLog, trace("A", "B", "C", "D")), equalTo(3));
@@ -36,4 +31,5 @@ public class InputConvertersSpec {
 		}
 		return trace;
 	}
+
 }

@@ -1,17 +1,7 @@
-package ee.ut.cs.modeling.checker;
+package ee.ut.cs.modeling.checker.parsers;
 
-import ee.ut.cs.modeling.checker.domain.eventlog.Event;
-import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
-import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
-import ee.ut.cs.modeling.checker.parsers.PnmlImportUtils;
-import ee.ut.cs.modeling.checker.parsers.XLogReader;
-import org.deckfour.xes.extension.std.XConceptExtension;
-import org.deckfour.xes.model.XAttributable;
-import org.deckfour.xes.model.XEvent;
-import org.deckfour.xes.model.XLog;
-import org.deckfour.xes.model.XTrace;
 import org.processmining.models.connections.GraphLayoutConnection;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
@@ -30,9 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class InputConverters {
+public class PetriNetParser {
 
-	public PetriNet getPetriNetFromFile(File f) {
+	public PetriNet getPetriNetFromFile(String fileName) {
+		File f = new File (fileName);
 
 		PnmlImportUtils ut = new PnmlImportUtils();
 
@@ -127,28 +118,4 @@ public class InputConverters {
 
 	}
 
-	public EventLog getEventLogFromFile(String fileName) {
-		EventLog eventLog = new EventLog();
-
-		try {
-			//List<XTrace>
-			XLog xLog = XLogReader.openLog(fileName);
-			for (XTrace xTrace : xLog) {
-				Trace trace = new Trace();
-				for (XEvent xEvent : xTrace) {
-					Event event = new Event(name(xEvent));
-					trace.addEvent(event);
-				}
-				eventLog.addTrace(trace);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return eventLog;
-	}
-
-	private String name(XAttributable xAttributable) {
-		return XConceptExtension.instance().extractName(xAttributable);
-	}
 }
