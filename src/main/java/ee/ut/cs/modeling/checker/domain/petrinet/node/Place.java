@@ -38,6 +38,14 @@ public class Place {
 		return tokens > 0;
 	}
 
+	public void removeToken() {
+		tokens--;
+	}
+
+	public int getTokenCount() {
+		return tokens;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

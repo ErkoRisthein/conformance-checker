@@ -7,6 +7,7 @@ import ee.ut.cs.modeling.checker.domain.petrinet.node.Transition;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class PetriNet {
 
@@ -42,13 +43,65 @@ public class PetriNet {
 	}
 
 	public boolean transitionHasAllInputTokens(String transitionName) {
-		for (Arc input : transitions.get(transitionName).getInputs()) {
+		for (Arc input : getInputs(transitionName)) {
 			String placeName = input.getFrom();
 			if(!places.get(placeName).hasTokens()) {
 				 return false;
 			}
 		}
 		return true;
+	}
+
+	public void createMissingToken(String transitionName) {
+		for (Arc input : getInputs(transitionName)) {
+			String placeName = input.getFrom();
+			Place place = places.get(placeName);
+			if (!place.hasTokens()) {
+				place.addToken();
+			}
+		}
+	}
+
+	public void consumeInputTokens(String transitionName) {
+		for (Arc input : getInputs(transitionName)) {
+			String placeName = input.getFrom();
+			places.get(placeName).removeToken();
+		}
+	}
+
+	public void produceOutputTokens(String transitionName) {
+		for (Arc output : getOutputs(transitionName)) {
+			String placeName = output.getTo();
+			places.get(placeName).addToken();
+		}
+	}
+
+	private Set<Arc> getInputs(String transitionName) {
+		return transitions.get(transitionName).getInputs();
+	}
+
+	private Set<Arc> getOutputs(String transitionName) {
+		return transitions.get(transitionName).getOutputs();
+	}
+
+	public int countRemainingTokens() {
+		int count = 0;
+		for (Place place : places.values()) {
+			count += place.getTokenCount();
+		}
+		return count;
+	}
+
+	public void addStartToken() {
+		start.addToken();
+	}
+
+	public boolean hasEndToken() {
+		return end.hasTokens();
+	}
+
+	public void removeEndToken() {
+		end.removeToken();
 	}
 
 	@Override

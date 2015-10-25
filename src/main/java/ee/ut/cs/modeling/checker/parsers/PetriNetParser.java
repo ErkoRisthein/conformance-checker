@@ -63,7 +63,6 @@ public class PetriNetParser {
 		PetriNet petriNet = new PetriNet();
 
 		for (Place place : places) {
-			System.out.println(place);
 			Set<Arc> inputArcs = getInputArcs(net, place);
 			Set<Arc> outputArcs = getOutputArcs(net, place);
 			petriNet.addPlace(
@@ -75,7 +74,6 @@ public class PetriNetParser {
 		}
 
 		for (Transition transition : transitions) {
-			System.out.println(transition);
 			Set<Arc> inputArcs = getInputArcs(net, transition);
 			Set<Arc> outputArcs = getOutputArcs(net, transition);
 			petriNet.addTransition(new ee.ut.cs.modeling.checker.domain.petrinet.node.Transition(
@@ -93,7 +91,6 @@ public class PetriNetParser {
 		Set<Arc> result = new HashSet<>();
 
 		for (PetrinetEdge arc : parserArcs) {
-			System.out.println(arc);
 			// For some reason getLabel() doesn't work here, using toString().
 			String from = arc.getSource().toString();
 			String to = arc.getTarget().toString();

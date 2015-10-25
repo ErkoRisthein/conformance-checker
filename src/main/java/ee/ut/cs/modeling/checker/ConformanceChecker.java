@@ -1,7 +1,102 @@
 package ee.ut.cs.modeling.checker;
 
-public class ConformanceChecker {
-    // Dummy comment for second commit.
+import ee.ut.cs.modeling.checker.domain.eventlog.Event;
+import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
+import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
+import ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters;
+import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 
+import java.util.Map;
+
+public class ConformanceChecker {
+
+	private PetriNet petriNet;
+	private Trace trace;
+	private TraceParameters params;
+	private String transitionName;
+
+	public double getFitness(PetriNet petriNet, EventLog eventLog) {
+		replayLog(petriNet, eventLog);
+		return calculateFitness(eventLog);
+	}
+
+	EventLog replayLog(PetriNet petriNet, EventLog eventLog) {
+		this.petriNet = petriNet;
+		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getAggregatedTraces().entrySet()) {
+			trace = entry.getKey();
+			params = entry.getValue();
+			replayTrace();
+		}
+
+		return eventLog;
+	}
+
+	private void replayTrace() {
+		addStartToken();
+		replayEvents();
+		consumeEndToken();
+		setRemainingTokens();
+	}
+
+	private void setRemainingTokens() {
+		int remainingTokens = petriNet.countRemainingTokens();
+		params.setRemaining(remainingTokens);
+	}
+
+	private void consumeEndToken() {
+		if (petriNet.hasEndToken()) {
+			petriNet.removeEndToken();
+			params.incrementConsumed();
+		}
+	}
+
+	private void replayEvents() {
+		for (Event event : trace.getTrace()) {
+			transitionName = event.getName();
+			createMissingTokensIfNeeded();
+			consumeInputTokens();
+			produceOutputTokens();
+		}
+	}
+
+	private void createMissingTokensIfNeeded() {
+		if (!petriNet.transitionHasAllInputTokens(transitionName)) {
+			petriNet.createMissingToken(transitionName);
+			params.incrementMissing();
+		}
+	}
+
+	private void produceOutputTokens() {
+		petriNet.produceOutputTokens(transitionName);
+		params.incrementProduced();
+	}
+
+	private void consumeInputTokens() {
+		petriNet.consumeInputTokens(transitionName);
+		params.incrementConsumed();
+	}
+
+	private void addStartToken() {
+		petriNet.addStartToken();
+		params.incrementProduced();
+	}
+
+	private double calculateFitness(EventLog eventLog) {
+		double aggregatedMissing = 0f;
+		double aggregatedRemaining = 0f;
+		double aggregatedConsumed = 0f;
+		double aggregatedProduced = 0f;
+
+		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getAggregatedTraces().entrySet()) {
+			TraceParameters params = entry.getValue();
+
+			aggregatedMissing += params.getCount() * params.getMissing();
+			aggregatedRemaining += params.getCount() * params.getRemaining();
+			aggregatedConsumed += params.getCount() * params.getConsumed();
+			aggregatedProduced += params.getCount() * params.getProduced();
+		}
+
+		return 0.5 * (1 - (aggregatedMissing / aggregatedConsumed)) + 0.5 * (1 - (aggregatedRemaining / aggregatedProduced));
+	}
 
 }

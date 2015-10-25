@@ -36,8 +36,8 @@ public class TraceParameters {
 		missing++;
 	}
 
-	public void incrementRemaining() {
-		remaining++;
+	public void setRemaining(int remaining) {
+		this.remaining = remaining;
 	}
 
 	public void incrementConsumed() {
