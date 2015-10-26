@@ -1,22 +1,17 @@
 package ee.ut.cs.modeling.checker;
 
-import com.google.common.collect.ImmutableSet;
-import ee.ut.cs.modeling.checker.domain.eventlog.Event;
 import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
 import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
-import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
-import ee.ut.cs.modeling.checker.domain.petrinet.node.Place;
-import ee.ut.cs.modeling.checker.domain.petrinet.node.Transition;
+import ee.ut.cs.modeling.checker.domain.petrinet.Place;
+import ee.ut.cs.modeling.checker.domain.petrinet.Transition;
 import ee.ut.cs.modeling.checker.parsers.EventLogParser;
 import ee.ut.cs.modeling.checker.parsers.PetriNetParser;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import static ee.ut.cs.modeling.checker.PetriNetTestHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -57,7 +52,77 @@ public class ConformanceCheckerSpec {
 	}
 
 	@Test
-	public void replayMultiInputOutputPetriNet() {
+	public void multiInputOutputPetriNetFitness() {
+		PetriNet petriNet = generateMultiInputPetriNet();
+		EventLog eventLog = generateAbEventLog();
+
+		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
+
+		assertThat(fitness, is(equalTo(1d)));
+	}
+
+	@Test
+	public void getSimpleBehavioralAppropriateness() {
+		PetriNet petriNet = getTestPetriNet();
+		EventLog eventLog = getEventLog("test.xes");
+
+		double sba = conformanceChecker.getSimpleBehavioralAppropriateness(petriNet, eventLog);
+
+		assertThat(sba, is(closeTo(0.9236111, 0.0000001)));
+	}
+
+	@Test
+	public void getSimpleStructuralAppropriateness() {
+		PetriNet petriNet = getTestPetriNet();
+
+		double ssa = conformanceChecker.getSimpleStructuralAppropriateness(petriNet);
+
+		assertThat(ssa, is(equalTo(0.7)));
+	}
+
+	private void replayLog(String eventLogFilename) {
+		PetriNet petriNet = getTestPetriNet();
+		EventLog eventLog = getEventLog(eventLogFilename);
+
+		conformanceChecker.replayLog(petriNet, eventLog);
+
+		TraceParameters abcdParams = getParams(eventLog, trace("A", "B", "C", "D"));
+		assertParams(abcdParams, 0, 0, 5, 5, 3);
+
+		TraceParameters abeParams = getParams(eventLog, trace("A", "B", "E"));
+		assertParams(abeParams, 0, 0, 4, 4, 6);
+	}
+
+	private PetriNet getTestPetriNet() {
+		return petriNetParser.getPetriNetFromFile("test.pnml");
+	}
+
+	private EventLog getEventLog(String fileName) {
+		return eventLogParser.getEventLogFromFile(fileName);
+	}
+
+	private TraceParameters getParams(EventLog eventLog, Trace trace) {
+		return eventLog.getTraces().get(trace);
+	}
+
+	private void assertParams(TraceParameters traceParameters, int missing, int remaining, int consumed, int produced, int count) {
+		assertThat(traceParameters.getMissing(), is(equalTo(missing)));
+		assertThat(traceParameters.getRemaining(), is(equalTo(remaining)));
+		assertThat(traceParameters.getConsumed(), is(equalTo(consumed)));
+		assertThat(traceParameters.getProduced(), is(equalTo(produced)));
+		assertThat(traceParameters.getCount(), is(equalTo(count)));
+	}
+
+	private void assertFitness(String eventLogFilename, double expectedFitness) {
+		PetriNet petriNet = getTestPetriNet();
+		EventLog eventLog = getEventLog(eventLogFilename);
+
+		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
+
+		assertThat(fitness, is(equalTo(expectedFitness)));
+	}
+
+	private PetriNet generateMultiInputPetriNet() {
 		PetriNet petriNet = new PetriNet();
 
 		petriNet.addPlace(new Place("p1", noArc(), arcs("p1", "A")));
@@ -69,85 +134,15 @@ public class ConformanceCheckerSpec {
 		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2", "A", "p3", "A", "p4")));
 		petriNet.addTransition(new Transition("B", arcs("p2", "B", "p3", "B", "p4", "B"), arcs("B", "p5")));
 
+		return petriNet;
+	}
+
+	private EventLog generateAbEventLog() {
 		EventLog eventLog = new EventLog();
+
 		eventLog.addTrace(trace("A", "B"));
 
-		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
-
-		assertThat(fitness, is(equalTo(1d)));
-	}
-
-	@Test
-	public void getSimpleBehavioralAppropriateness() {
-		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
-		EventLog eventLog = eventLogParser.getEventLogFromFile("test.xes");
-
-		double sba = conformanceChecker.getSimpleBehavioralAppropriateness(petriNet, eventLog);
-
-		assertThat(sba, is(closeTo(0.9236111, 0.0000001)));
-	}
-
-	@Test
-	public void getSimpleStructuralAppropriateness() {
-		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
-
-		double ssa = conformanceChecker.getSimpleStructuralAppropriateness(petriNet);
-
-		assertThat(ssa, is(equalTo(0.7)));
-	}
-
-	private void replayLog(String eventLogFilename) {
-		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
-		EventLog eventLog = eventLogParser.getEventLogFromFile(eventLogFilename);
-
-		conformanceChecker.replayLog(petriNet, eventLog);
-
-		TraceParameters abcdTraceParameters = eventLog.getAggregatedTraces().get(trace("A", "B", "C", "D"));
-		assertParams(abcdTraceParameters, 0, 0, 5, 5, 3);
-
-		TraceParameters abeTraceParameters = eventLog.getAggregatedTraces().get(trace("A", "B", "E"));
-		assertParams(abeTraceParameters, 0, 0, 4, 4, 6);
-	}
-
-	private void assertFitness(String eventLogFilename, double expectedFitness) {
-		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
-		EventLog eventLog = eventLogParser.getEventLogFromFile(eventLogFilename);
-
-		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
-
-		assertThat(fitness, is(equalTo(expectedFitness)));
-	}
-
-	private void assertParams(TraceParameters traceParameters, int missing, int remaining, int consumed, int produced, int count) {
-		assertThat(traceParameters.getMissing(), is(equalTo(missing)));
-		assertThat(traceParameters.getRemaining(), is(equalTo(remaining)));
-		assertThat(traceParameters.getConsumed(), is(equalTo(consumed)));
-		assertThat(traceParameters.getProduced(), is(equalTo(produced)));
-		assertThat(traceParameters.getCount(), is(equalTo(count)));
-	}
-
-	private Trace trace(String... events) {
-		Trace trace = new Trace();
-		for (String event : events) {
-			trace.addEvent(new Event(event));
-		}
-		return trace;
-	}
-
-	private ImmutableSet<Arc> noArc() {
-		return ImmutableSet.of();
-	}
-
-	private Set<Arc> arcs(String... arcParams) {
-		HashSet<Arc> arcs = new HashSet<>();
-
-		for (int i = 0; i < arcParams.length; i += 2) {
-			String from = arcParams[i];
-			String to = arcParams[i + 1];
-			arcs.add(new Arc(from, to));
-		}
-
-		return arcs;
+		return eventLog;
 	}
 
 }

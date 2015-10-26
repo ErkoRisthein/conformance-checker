@@ -11,10 +11,10 @@ import java.util.Map;
 public class ConformanceChecker {
 
 	private PetriNet petriNet;
+	private EventLog eventLog;
 	private Trace trace;
 	private TraceParameters params;
 	private String transitionName;
-	private EventLog eventLog;
 
 	public double getFitness(PetriNet petriNet, EventLog eventLog) {
 		replayLog(petriNet, eventLog);
@@ -32,17 +32,16 @@ public class ConformanceChecker {
 		return (L + 2) / N;
 	}
 
-	EventLog replayLog(PetriNet petriNet, EventLog eventLog) {
+	void replayLog(PetriNet petriNet, EventLog eventLog) {
 		this.petriNet = petriNet;
 		this.eventLog = eventLog;
 
-		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getAggregatedTraces().entrySet()) {
-			trace = entry.getKey();
-			params = entry.getValue();
+		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getTraces().entrySet()) {
+			this.trace = entry.getKey();
+			this.params = entry.getValue();
 			replayTrace();
 		}
 
-		return eventLog;
 	}
 
 	private void replayTrace() {
@@ -69,7 +68,7 @@ public class ConformanceChecker {
 
 	private void replayEvents() {
 		for (Event event : trace.getTrace()) {
-			transitionName = event.getName();
+			this.transitionName = event.getName();
 			addEnabledTransition();
 			createMissingTokensIfNeeded();
 			consumeInputTokens();
@@ -109,7 +108,7 @@ public class ConformanceChecker {
 		double aggregatedConsumed = 0f;
 		double aggregatedProduced = 0f;
 
-		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getAggregatedTraces().entrySet()) {
+		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getTraces().entrySet()) {
 			TraceParameters params = entry.getValue();
 
 			aggregatedMissing += params.getCount() * params.getMissing();
@@ -126,7 +125,7 @@ public class ConformanceChecker {
 		double sum1 = 0d;
 		double sum2 = 0d;
 
-		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getAggregatedTraces().entrySet()) {
+		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getTraces().entrySet()) {
 			TraceParameters params = entry.getValue();
 
 			int ni = params.getCount();

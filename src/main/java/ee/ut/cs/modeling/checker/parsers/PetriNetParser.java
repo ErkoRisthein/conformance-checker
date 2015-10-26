@@ -1,7 +1,7 @@
 package ee.ut.cs.modeling.checker.parsers;
 
+import ee.ut.cs.modeling.checker.domain.petrinet.Arc;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
-import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
 import org.processmining.models.connections.GraphLayoutConnection;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
@@ -66,7 +66,7 @@ public class PetriNetParser {
 			Set<Arc> inputArcs = getInputArcs(net, place);
 			Set<Arc> outputArcs = getOutputArcs(net, place);
 			petriNet.addPlace(
-					new ee.ut.cs.modeling.checker.domain.petrinet.node.Place(
+					new ee.ut.cs.modeling.checker.domain.petrinet.Place(
 							place.getLabel(),
 							inputArcs,
 							outputArcs)
@@ -76,7 +76,7 @@ public class PetriNetParser {
 		for (Transition transition : transitions) {
 			Set<Arc> inputArcs = getInputArcs(net, transition);
 			Set<Arc> outputArcs = getOutputArcs(net, transition);
-			petriNet.addTransition(new ee.ut.cs.modeling.checker.domain.petrinet.node.Transition(
+			petriNet.addTransition(new ee.ut.cs.modeling.checker.domain.petrinet.Transition(
 					transition.getLabel(),
 					inputArcs,
 					outputArcs));

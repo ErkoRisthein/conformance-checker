@@ -1,10 +1,10 @@
 package ee.ut.cs.modeling.checker.parsers;
 
-import ee.ut.cs.modeling.checker.domain.eventlog.Event;
 import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
 import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import org.junit.Test;
 
+import static ee.ut.cs.modeling.checker.PetriNetTestHelper.trace;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -35,15 +35,7 @@ public class EventLogParserSpec {
 
 
 	private Integer count(EventLog eventLog, Trace trace) {
-		return eventLog.getAggregatedTraces().get(trace).getCount();
-	}
-
-	private Trace trace(String... events) {
-		Trace trace = new Trace();
-		for (String event : events) {
-			trace.addEvent(new Event(event));
-		}
-		return trace;
+		return eventLog.getTraces().get(trace).getCount();
 	}
 
 }

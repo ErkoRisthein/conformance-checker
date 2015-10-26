@@ -72,6 +72,7 @@ public class TraceParameters {
 				", r=" + remaining +
 				", c=" + consumed +
 				", p=" + produced +
+				", mean=" + getMeanEnabledTransitions() +
 				'}';
 	}
 }

@@ -1,13 +1,11 @@
-package ee.ut.cs.modeling.checker.domain.petrinet.node;
-
-import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
+package ee.ut.cs.modeling.checker.domain.petrinet;
 
 import java.util.Objects;
 import java.util.Set;
 
 public class Place {
 
-	private String name;
+	private final String name;
 	private Set<Arc> inputs;
 	private Set<Arc> outputs;
 	private int tokens;

@@ -1,4 +1,4 @@
-package ee.ut.cs.modeling.checker.domain.petrinet.arc;
+package ee.ut.cs.modeling.checker.domain.petrinet;
 
 import java.util.Objects;
 

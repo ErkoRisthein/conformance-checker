@@ -1,9 +1,6 @@
 package ee.ut.cs.modeling.checker.domain.petrinet;
 
 import com.google.common.base.MoreObjects;
-import ee.ut.cs.modeling.checker.domain.petrinet.arc.Arc;
-import ee.ut.cs.modeling.checker.domain.petrinet.node.Place;
-import ee.ut.cs.modeling.checker.domain.petrinet.node.Transition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,16 +27,16 @@ public class PetriNet {
 		}
 	}
 
+	public void addTransition(Transition transition) {
+		transitions.put(transition.getName(), transition);
+	}
+
 	public Place getStart() {
 		return start;
 	}
 
 	public Place getEnd() {
 		return end;
-	}
-
-	public void addTransition(Transition transition) {
-		transitions.put(transition.getName(), transition);
 	}
 
 	public boolean transitionHasAllInputTokens(String transitionName) {

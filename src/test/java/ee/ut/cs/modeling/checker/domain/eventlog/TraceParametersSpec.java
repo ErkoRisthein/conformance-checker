@@ -15,7 +15,9 @@ public class TraceParametersSpec {
 		traceParameters.addEnabledTransition(1);
 		traceParameters.addEnabledTransition(2);
 
+		double meanEnabledTransitions = traceParameters.getMeanEnabledTransitions();
 
-		assertThat(traceParameters.getMeanEnabledTransitions(), is(equalTo(1.5d)));
+		assertThat(meanEnabledTransitions, is(equalTo(1.5d)));
 	}
+
 }
