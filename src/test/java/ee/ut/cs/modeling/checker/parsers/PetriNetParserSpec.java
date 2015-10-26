@@ -22,6 +22,10 @@ public class PetriNetParserSpec {
 
 		assertThat(petriNet.getStart(), is(equalTo(expectedStart)));
 		assertThat(petriNet.getEnd(), is(equalTo(expectedEnd)));
+		assertThat(petriNet.countPlaces(), is(equalTo(5)));
+		assertThat(petriNet.countTransitions(), is(equalTo(5)));
+
+
 	}
 
 }

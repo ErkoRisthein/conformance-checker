@@ -6,10 +6,20 @@ public class Arc {
 
 	private String from;
 	private String to;
+	private Node src;
+	private Node tgt;
 
 	public Arc(String from, String to) {
 		this.from = from;
 		this.to = to;
+	}
+
+
+	public Arc(Node src, Node tgt) {
+		this.src = src;
+		this.tgt = tgt;
+		this.from = src != null ? src.getName() : null;
+		this.to = tgt != null ? tgt.getName() : null;
 	}
 
 	public String getFrom() {

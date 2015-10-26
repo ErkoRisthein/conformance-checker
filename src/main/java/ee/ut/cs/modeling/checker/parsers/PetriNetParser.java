@@ -1,7 +1,5 @@
 package ee.ut.cs.modeling.checker.parsers;
 
-import ee.ut.cs.modeling.checker.domain.petrinet.Arc;
-import ee.ut.cs.modeling.checker.domain.petrinet.Node;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import org.processmining.models.connections.GraphLayoutConnection;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
@@ -17,9 +15,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Collection;
 
 public class PetriNetParser {
+
+	private PetriNet petriNet;
 
 	public PetriNet getPetriNetFromFile(String fileName) {
 		File f = new File (fileName);
@@ -42,61 +41,37 @@ public class PetriNetParser {
 		Marking marking = new Marking();
 		pnml.convertToNet(net, marking, new GraphLayoutConnection(net));
 
-		Collection<Place> places = net.getPlaces();
-		Collection<Transition> transitions = net.getTransitions();
-		Place aPlace = places.iterator().next();
-		Transition aTransition = transitions.iterator().next();
-
-		// to get outgoing edges from a place
-		Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> edgesOutP = net.getOutEdges(aPlace);
-
-		//to get ingoing edges to a place
-		Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> edgesInP = net.getInEdges(aPlace);
-
-		//to get outgoing edges from a transition
-		Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> edgesOutT = net.getOutEdges(aTransition);
-
-		//to get ingoing edges to a transition
-		Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> edgesInT = net.getInEdges(aTransition);
-
-		PetriNet petriNet = new PetriNet();
+		petriNet = new PetriNet();
 
 		for (Place place : net.getPlaces()) {
 			ee.ut.cs.modeling.checker.domain.petrinet.Place p = new ee.ut.cs.modeling.checker.domain.petrinet.Place(place.getLabel());
-			addInputArcs(net, place, p);
-			addOutputArcs(net, place, p);
 			petriNet.addPlace(p);
 		}
 
 		for (Transition transition : net.getTransitions()) {
 			ee.ut.cs.modeling.checker.domain.petrinet.Transition t = new ee.ut.cs.modeling.checker.domain.petrinet.Transition(transition.getLabel());
-			addInputArcs(net, transition, t);
-			addOutputArcs(net, transition, t);
 			petriNet.addTransition(t);
+		}
+
+		for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : net.getEdges()) {
+			String fromName = edge.getSource().getLabel();
+			String toName = edge.getTarget().getLabel();
+
+			ee.ut.cs.modeling.checker.domain.petrinet.Transition fromTransition = petriNet.getTransition(fromName);
+			ee.ut.cs.modeling.checker.domain.petrinet.Place toPlace = petriNet.getPlace(toName);
+
+			fromTransition.addTo(toPlace);
+			toPlace.addFrom(fromTransition);
+
+			ee.ut.cs.modeling.checker.domain.petrinet.Place fromPlace = petriNet.getPlace(fromName);
+			ee.ut.cs.modeling.checker.domain.petrinet.Transition toTransition = petriNet.getTransition(toName);
+
+			fromPlace.addTo(toTransition);
+			toTransition.addFrom(fromPlace);
+
 		}
 
 		return petriNet;
 	}
-
-	private void addInputArcs(PetrinetGraph net, PetrinetNode node, Node n) {
-
-		net.getInEdges(node).forEach(arc -> {
-			String from = arc.getSource().toString();
-			String to = arc.getTarget().toString();
-			n.addInputs(new Arc(from, to));
-		});
-
-	}
-
-	private void addOutputArcs(PetrinetGraph net, PetrinetNode node, Node n) {
-
-		net.getOutEdges(node).forEach(arc -> {
-			String from = arc.getSource().toString();
-			String to = arc.getTarget().toString();
-			n.addOutputs(new Arc(from, to));
-		});
-
-	}
-
 
 }

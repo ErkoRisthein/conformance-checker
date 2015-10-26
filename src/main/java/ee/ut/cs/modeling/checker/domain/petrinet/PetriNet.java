@@ -10,21 +10,9 @@ public class PetriNet {
 
 	private Map<String, Place> places = new HashMap<>();
 	private Map<String, Transition> transitions = new HashMap<>();
-	private Place start;
-	private Place end;
 
 	public void addPlace(Place place) {
 		places.put(place.getName(), place);
-		updateStartEnd(place);
-	}
-
-	private void updateStartEnd(Place place) {
-		if (place.getInputs().isEmpty()) {
-			start = place;
-		}
-		if (place.getOutputs().isEmpty()) {
-			end = place;
-		}
 	}
 
 	public void addTransition(Transition transition) {
@@ -32,11 +20,21 @@ public class PetriNet {
 	}
 
 	public Place getStart() {
-		return start;
+		for (Place place : places.values()) {
+			if (place.getInputs().isEmpty()) {
+				return place;
+			}
+		}
+		return null;
 	}
 
 	public Place getEnd() {
-		return end;
+		for (Place place : places.values()) {
+			if (place.getOutputs().isEmpty()) {
+				return place;
+			}
+		}
+		return null;
 	}
 
 	public boolean transitionHasAllInputTokens(String transitionName) {
@@ -114,19 +112,19 @@ public class PetriNet {
 	}
 
 	public void addStartToken() {
-		start.addToken();
+		getStart().addToken();
 	}
 
 	public boolean hasEndToken() {
-		return end.hasTokens();
+		return getEnd().hasTokens();
 	}
 
 	public void removeEndToken() {
-		end.removeToken();
+		getEnd().removeToken();
 	}
 
 	public void addEndToken() {
-		end.addToken();
+		getEnd().addToken();
 	}
 
 	@Override
@@ -135,5 +133,13 @@ public class PetriNet {
 				.add("places", places)
 				.add("transitions", transitions)
 				.toString();
+	}
+
+	public Transition getTransition(String name) {
+		return transitions.get(name) != null ? transitions.get(name) : Transition.NULL;
+	}
+
+	public Place getPlace(String name) {
+		return places.get(name) != null ? places.get(name) : Place.NULL;
 	}
 }

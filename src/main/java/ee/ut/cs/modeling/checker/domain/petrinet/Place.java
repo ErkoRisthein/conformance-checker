@@ -7,9 +7,13 @@ import java.util.Set;
 
 public class Place implements Node {
 
+	public static final Place NULL = new Place("null");
+
 	private final String name;
 	private Set<Arc> inputs = new HashSet<>();
 	private Set<Arc> outputs = new HashSet<>();
+	private Set<Transition> from = new HashSet<>();
+	private Set<Transition> to = new HashSet<>();
 	private int tokens;
 
 	public Place(String name) {
@@ -25,6 +29,16 @@ public class Place implements Node {
 	public Place addInputs(Arc... arcs) {
 		Collections.addAll(inputs, arcs);
 		return this;
+	}
+
+	public void addFrom(Transition transition) {
+		from.add(transition);
+		addInputs(new Arc(transition.getName(), name));
+	}
+
+	public void addTo(Transition transition) {
+		to.add(transition);
+		addOutputs(new Arc(name, transition.getName()));
 	}
 
 	@Override
@@ -72,14 +86,12 @@ public class Place implements Node {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Place place = (Place) o;
-		return Objects.equals(name, place.name) &&
-				Objects.equals(inputs, place.inputs) &&
-				Objects.equals(outputs, place.outputs);
+		return Objects.equals(name, place.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, inputs, outputs);
+		return Objects.hash(name);
 	}
 
 	@Override
