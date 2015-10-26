@@ -60,14 +60,14 @@ public class PetriNetParser {
 			ee.ut.cs.modeling.checker.domain.petrinet.Transition fromTransition = petriNet.getTransition(fromName);
 			ee.ut.cs.modeling.checker.domain.petrinet.Place toPlace = petriNet.getPlace(toName);
 
-			fromTransition.addTo(toPlace);
-			toPlace.addFrom(fromTransition);
+			fromTransition.to(toPlace);
+			toPlace.from(fromTransition);
 
 			ee.ut.cs.modeling.checker.domain.petrinet.Place fromPlace = petriNet.getPlace(fromName);
 			ee.ut.cs.modeling.checker.domain.petrinet.Transition toTransition = petriNet.getTransition(toName);
 
-			fromPlace.addTo(toTransition);
-			toTransition.addFrom(fromPlace);
+			fromPlace.to(toTransition);
+			toTransition.from(fromPlace);
 
 		}
 

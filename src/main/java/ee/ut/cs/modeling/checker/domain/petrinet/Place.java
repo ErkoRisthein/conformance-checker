@@ -1,17 +1,14 @@
 package ee.ut.cs.modeling.checker.domain.petrinet;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Place implements Node {
+public class Place {
 
 	public static final Place NULL = new Place("null");
 
 	private final String name;
-	private Set<Arc> inputs = new HashSet<>();
-	private Set<Arc> outputs = new HashSet<>();
 	private Set<Transition> from = new HashSet<>();
 	private Set<Transition> to = new HashSet<>();
 	private int tokens;
@@ -20,45 +17,31 @@ public class Place implements Node {
 		this.name = name;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
-	public Place addInputs(Arc... arcs) {
-		Collections.addAll(inputs, arcs);
-		return this;
-	}
 
-	public void addFrom(Transition transition) {
+	public Place from(Transition transition) {
 		from.add(transition);
-		addInputs(new Arc(transition.getName(), name));
-	}
-
-	public void addTo(Transition transition) {
-		to.add(transition);
-		addOutputs(new Arc(name, transition.getName()));
-	}
-
-	@Override
-	public Place addOutputs(Arc... arcs) {
-		Collections.addAll(outputs, arcs);
 		return this;
 	}
 
-	@Override
-	public Set<Arc> getInputs() {
-		return inputs;
+	public Place to(Transition transition) {
+		to.add(transition);
+		return this;
 	}
 
-	@Override
-	public Set<Arc> getOutputs() {
-		return outputs;
+	public Set<Transition> getFrom() {
+		return from;
+	}
+
+	public Set<Transition> getTo() {
+		return to;
 	}
 
 	public int getOutputCount() {
-		return outputs.size();
+		return to.size();
 	}
 
 	public int getTokenCount() {
@@ -96,6 +79,6 @@ public class Place implements Node {
 
 	@Override
 	public String toString() {
-		return inputs + "->" + name + "(" + tokens + ")->" + outputs;
+		return from + "->" + name + "(" + tokens + ")->" + to;
 	}
 }

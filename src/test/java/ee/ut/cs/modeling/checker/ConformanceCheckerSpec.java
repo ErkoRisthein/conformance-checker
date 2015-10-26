@@ -10,7 +10,6 @@ import ee.ut.cs.modeling.checker.parsers.PetriNetParser;
 import org.junit.Before;
 import org.junit.Test;
 
-import static ee.ut.cs.modeling.checker.PetriNetTestHelper.arc;
 import static ee.ut.cs.modeling.checker.PetriNetTestHelper.trace;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -121,14 +120,26 @@ public class ConformanceCheckerSpec {
 	private PetriNet generateMultiInputPetriNet() {
 		PetriNet petriNet = new PetriNet();
 
-		petriNet.addPlace(new Place("p1").addOutputs(arc("p1", "A")));
-		petriNet.addPlace(new Place("p2").addInputs(arc("A", "p2")).addOutputs(arc("p2", "B")));
-		petriNet.addPlace(new Place("p3").addInputs(arc("A", "p3")).addOutputs(arc("p3", "B")));
-		petriNet.addPlace(new Place("p4").addInputs(arc("A", "p4")).addOutputs(arc("p4", "B")));
-		petriNet.addPlace(new Place("p5").addInputs(arc("B", "p5")));
+		Transition a = new Transition("A");
+		Transition b = new Transition("B");
 
-		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2"), arc("A", "p3"), arc("A", "p4")));
-		petriNet.addTransition(new Transition("B").addInputs(arc("p2", "B"), arc("p3", "B"), arc("p4", "B")).addOutputs(arc("B", "p5")));
+		Place p1 = new Place("p1");
+		Place p2 = new Place("p2");
+		Place p3 = new Place("p3");
+		Place p4 = new Place("p4");
+		Place p5 = new Place("p5");
+
+		p1.to(a);
+		p2.from(a).to(b);
+		p3.from(a).to(b);
+		p4.from(a).to(b);
+		p5.from(b);
+
+		a.from(p1).to(p2, p3, p4);
+		b.from(p2, p3, p4).to(p5);
+
+		petriNet.addPlace(p1, p2, p3, p4, p5);
+		petriNet.addTransition(a, b);
 
 		return petriNet;
 	}

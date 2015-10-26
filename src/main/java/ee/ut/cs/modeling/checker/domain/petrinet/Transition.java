@@ -5,13 +5,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Transition implements Node {
+public class Transition {
 
 	public static final Transition NULL = new Transition("null");
 
 	private final String name;
-	private Set<Arc> inputs = new HashSet<>();
-	private Set<Arc> outputs = new HashSet<>();
 	private Set<Place> from = new HashSet<>();
 	private Set<Place> to = new HashSet<>();
 
@@ -19,41 +17,27 @@ public class Transition implements Node {
 		this.name = name;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
-	public Transition addInputs(Arc... arcs) {
-		Collections.addAll(inputs, arcs);
+
+	public Transition from(Place... places) {
+		Collections.addAll(from, places);
 		return this;
 	}
 
-	public void addFrom(Place place) {
-		from.add(place);
-		addInputs(new Arc(place.getName(), name));
-	}
-
-	public void addTo(Place place) {
-		to.add(place);
-		addOutputs(new Arc(name, place.getName()));
-	}
-
-	@Override
-	public Transition addOutputs(Arc... arcs) {
-		Collections.addAll(outputs, arcs);
+	public Transition to(Place... places) {
+		Collections.addAll(to, places);
 		return this;
 	}
 
-	@Override
-	public Set<Arc> getInputs() {
-		return inputs;
+	public Set<Place> getFrom() {
+		return from;
 	}
 
-	@Override
-	public Set<Arc> getOutputs() {
-		return outputs;
+	public Set<Place> getTo() {
+		return to;
 	}
 
 	@Override
@@ -71,7 +55,7 @@ public class Transition implements Node {
 
 	@Override
 	public String toString() {
-		return inputs + "->" + name + "->" + outputs;
+		return from + "->" + name + "->" + to;
 	}
 
 }

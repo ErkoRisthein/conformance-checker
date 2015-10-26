@@ -4,24 +4,27 @@ import com.google.common.base.MoreObjects;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class PetriNet {
 
 	private Map<String, Place> places = new HashMap<>();
 	private Map<String, Transition> transitions = new HashMap<>();
 
-	public void addPlace(Place place) {
-		places.put(place.getName(), place);
+	public void addPlace(Place... places) {
+		for (Place place : places) {
+			this.places.put(place.getName(), place);
+		}
 	}
 
-	public void addTransition(Transition transition) {
-		transitions.put(transition.getName(), transition);
+	public void addTransition(Transition... transitions) {
+		for (Transition transition : transitions) {
+			this.transitions.put(transition.getName(), transition);
+		}
 	}
 
 	public Place getStart() {
 		for (Place place : places.values()) {
-			if (place.getInputs().isEmpty()) {
+			if (place.getFrom().isEmpty()) {
 				return place;
 			}
 		}
@@ -30,7 +33,7 @@ public class PetriNet {
 
 	public Place getEnd() {
 		for (Place place : places.values()) {
-			if (place.getOutputs().isEmpty()) {
+			if (place.getTo().isEmpty()) {
 				return place;
 			}
 		}
@@ -38,9 +41,8 @@ public class PetriNet {
 	}
 
 	public boolean transitionHasAllInputTokens(String transitionName) {
-		for (Arc input : getInputs(transitionName)) {
-			String placeName = input.getFrom();
-			if (!places.get(placeName).hasTokens()) {
+		for (Place place : transitions.get(transitionName).getFrom()) {
+			if (!place.hasTokens()) {
 				return false;
 			}
 		}
@@ -48,35 +50,23 @@ public class PetriNet {
 	}
 
 	public void createMissingToken(String transitionName) {
-		for (Arc input : getInputs(transitionName)) {
-			String placeName = input.getFrom();
-			Place place = places.get(placeName);
-			if (!place.hasTokens()) {
-				place.addToken();
+		for (Place input : transitions.get(transitionName).getFrom()) {
+			if (!input.hasTokens()) {
+				input.addToken();
 			}
 		}
 	}
 
 	public void consumeInputTokens(String transitionName) {
-		for (Arc input : getInputs(transitionName)) {
-			String placeName = input.getFrom();
-			places.get(placeName).removeToken();
+		for (Place input : transitions.get(transitionName).getFrom()) {
+			input.removeToken();
 		}
 	}
 
 	public void produceOutputTokens(String transitionName) {
-		for (Arc output : getOutputs(transitionName)) {
-			String placeName = output.getTo();
-			places.get(placeName).addToken();
+		for (Place output : transitions.get(transitionName).getTo()) {
+			output.addToken();
 		}
-	}
-
-	private Set<Arc> getInputs(String transitionName) {
-		return transitions.get(transitionName).getInputs();
-	}
-
-	private Set<Arc> getOutputs(String transitionName) {
-		return transitions.get(transitionName).getOutputs();
 	}
 
 	public int countRemainingTokens() {
