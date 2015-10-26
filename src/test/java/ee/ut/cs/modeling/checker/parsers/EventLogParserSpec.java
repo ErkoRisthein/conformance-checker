@@ -35,7 +35,7 @@ public class EventLogParserSpec {
 
 
 	private Integer count(EventLog eventLog, Trace trace) {
-		return eventLog.getTraces().get(trace).getCount();
+		return eventLog.getTraceParameters(trace).getCount();
 	}
 
 }

@@ -1,7 +1,6 @@
 package ee.ut.cs.modeling.checker;
 
 import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
-import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.domain.petrinet.Place;
@@ -11,7 +10,8 @@ import ee.ut.cs.modeling.checker.parsers.PetriNetParser;
 import org.junit.Before;
 import org.junit.Test;
 
-import static ee.ut.cs.modeling.checker.PetriNetTestHelper.*;
+import static ee.ut.cs.modeling.checker.PetriNetTestHelper.arc;
+import static ee.ut.cs.modeling.checker.PetriNetTestHelper.trace;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -86,10 +86,10 @@ public class ConformanceCheckerSpec {
 
 		conformanceChecker.replayLog(petriNet, eventLog);
 
-		TraceParameters abcdParams = getParams(eventLog, trace("A", "B", "C", "D"));
+		TraceParameters abcdParams = eventLog.getTraceParameters(trace("A", "B", "C", "D"));
 		assertParams(abcdParams, 0, 0, 5, 5, 3);
 
-		TraceParameters abeParams = getParams(eventLog, trace("A", "B", "E"));
+		TraceParameters abeParams = eventLog.getTraceParameters(trace("A", "B", "E"));
 		assertParams(abeParams, 0, 0, 4, 4, 6);
 	}
 
@@ -99,10 +99,6 @@ public class ConformanceCheckerSpec {
 
 	private EventLog getEventLog(String fileName) {
 		return eventLogParser.getEventLogFromFile(fileName);
-	}
-
-	private TraceParameters getParams(EventLog eventLog, Trace trace) {
-		return eventLog.getTraces().get(trace);
 	}
 
 	private void assertParams(TraceParameters traceParameters, int missing, int remaining, int consumed, int produced, int count) {
@@ -125,14 +121,14 @@ public class ConformanceCheckerSpec {
 	private PetriNet generateMultiInputPetriNet() {
 		PetriNet petriNet = new PetriNet();
 
-		petriNet.addPlace(new Place("p1", noArc(), arcs("p1", "A")));
-		petriNet.addPlace(new Place("p2", arcs("A", "p2"), arcs("p2", "B")));
-		petriNet.addPlace(new Place("p3", arcs("A", "p3"), arcs("p3", "B")));
-		petriNet.addPlace(new Place("p4", arcs("A", "p4"), arcs("p4", "B")));
-		petriNet.addPlace(new Place("p5", arcs("B", "p5"), noArc()));
+		petriNet.addPlace(new Place("p1").addOutputs(arc("p1", "A")));
+		petriNet.addPlace(new Place("p2").addInputs(arc("A", "p2")).addOutputs(arc("p2", "B")));
+		petriNet.addPlace(new Place("p3").addInputs(arc("A", "p3")).addOutputs(arc("p3", "B")));
+		petriNet.addPlace(new Place("p4").addInputs(arc("A", "p4")).addOutputs(arc("p4", "B")));
+		petriNet.addPlace(new Place("p5").addInputs(arc("B", "p5")));
 
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2", "A", "p3", "A", "p4")));
-		petriNet.addTransition(new Transition("B", arcs("p2", "B", "p3", "B", "p4", "B"), arcs("B", "p5")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2"), arc("A", "p3"), arc("A", "p4")));
+		petriNet.addTransition(new Transition("B").addInputs(arc("p2", "B"), arc("p3", "B"), arc("p4", "B")).addOutputs(arc("B", "p5")));
 
 		return petriNet;
 	}

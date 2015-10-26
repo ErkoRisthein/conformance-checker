@@ -75,4 +75,5 @@ public class TraceParameters {
 				", mean=" + getMeanEnabledTransitions() +
 				'}';
 	}
+
 }

@@ -2,8 +2,7 @@ package ee.ut.cs.modeling.checker.domain.petrinet;
 
 import org.junit.Test;
 
-import static ee.ut.cs.modeling.checker.PetriNetTestHelper.arcs;
-import static ee.ut.cs.modeling.checker.PetriNetTestHelper.noArc;
+import static ee.ut.cs.modeling.checker.PetriNetTestHelper.arc;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -14,8 +13,8 @@ public class PetriNetSpec {
 	public void DoesNotHaveAllInputTokens() {
 		PetriNet petriNet = new PetriNet();
 
-		petriNet.addPlace(new Place("p1", noArc(), arcs("p1", "A")));
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addPlace(new Place("p1").addOutputs(arc("p1", "A")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(false)));
 	}
@@ -24,11 +23,11 @@ public class PetriNetSpec {
 	public void hasAllInputTokens() {
 		PetriNet petriNet = new PetriNet();
 
-		Place place = new Place("p1", noArc(), arcs("p1", "A"));
+		Place place = new Place("p1").addOutputs(arc("p1", "A"));
 		place.addToken();
 		petriNet.addPlace(place);
 
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(true)));
 	}
@@ -36,8 +35,8 @@ public class PetriNetSpec {
 	@Test
 	public void createMissingTokenWorks() {
 		PetriNet petriNet = new PetriNet();
-		petriNet.addPlace(new Place("p1", noArc(), arcs("p1", "A")));
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addPlace(new Place("p1").addOutputs(arc("p1", "A")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(false)));
 		petriNet.createMissingToken("A");
@@ -48,11 +47,11 @@ public class PetriNetSpec {
 	public void consumeInputTokens() {
 		PetriNet petriNet = new PetriNet();
 
-		Place place = new Place("p1", noArc(), arcs("p1", "A"));
+		Place place = new Place("p1").addOutputs(arc("p1", "A"));
 		place.addToken();
 		petriNet.addPlace(place);
 
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.transitionHasAllInputTokens("A"), is(equalTo(true)));
 		petriNet.consumeInputTokens("A");
@@ -63,12 +62,12 @@ public class PetriNetSpec {
 	public void produceOutputTokens() {
 		PetriNet petriNet = new PetriNet();
 
-		Place inputPlace = new Place("p1", noArc(), arcs("p1", "A"));
+		Place inputPlace = new Place("p1").addOutputs(arc("p1", "A"));
 		petriNet.addPlace(inputPlace);
 
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
-		Place outputPlace = new Place("p2", arcs("A", "p2"), noArc());
+		Place outputPlace = new Place("p2").addInputs(arc("A", "p2"));
 		petriNet.addPlace(outputPlace);
 
 		assertThat(outputPlace.hasTokens(), is(equalTo(false)));
@@ -79,8 +78,8 @@ public class PetriNetSpec {
 	@Test
 	public void countRemainingTokensIsZero() {
 		PetriNet petriNet = new PetriNet();
-		petriNet.addPlace(new Place("p1", noArc(), arcs("p1", "A")));
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addPlace(new Place("p1").addOutputs(arc("p1", "A")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.countRemainingTokens(), is(equalTo(0)));
 	}
@@ -89,11 +88,11 @@ public class PetriNetSpec {
 	public void countRemainingTokensIsOne() {
 		PetriNet petriNet = new PetriNet();
 
-		Place place = new Place("p1", noArc(), arcs("p1", "A"));
+		Place place = new Place("p1").addOutputs(arc("p1", "A"));
 		petriNet.addPlace(place);
 		place.addToken();
 
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.countRemainingTokens(), is(equalTo(1)));
 	}
@@ -102,11 +101,11 @@ public class PetriNetSpec {
 	public void cleanUpRemainingTokens() {
 		PetriNet petriNet = new PetriNet();
 
-		Place place = new Place("p1", noArc(), arcs("p1", "A"));
+		Place place = new Place("p1").addOutputs(arc("p1", "A"));
 		petriNet.addPlace(place);
 		place.addToken();
 
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.countRemainingTokens(), is(equalTo(1)));
 		petriNet.cleanUpRemainingTokens();
@@ -117,8 +116,8 @@ public class PetriNetSpec {
 	public void countEnabledTransitionsIsZero() {
 		PetriNet petriNet = new PetriNet();
 
-		petriNet.addPlace(new Place("p1", noArc(), arcs("p1", "A")));
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addPlace(new Place("p1").addOutputs(arc("p1", "A")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.countEnabledTransitions(), is(equalTo(0)));
 	}
@@ -127,10 +126,10 @@ public class PetriNetSpec {
 	public void countEnabledTransitionsIsOne() {
 		PetriNet petriNet = new PetriNet();
 
-		Place place = new Place("p1", noArc(), arcs("p1", "A"));
+		Place place = new Place("p1").addOutputs(arc("p1", "A"));
 		place.addToken();
 		petriNet.addPlace(place);
-		petriNet.addTransition(new Transition("A", arcs("p1", "A"), arcs("A", "p2")));
+		petriNet.addTransition(new Transition("A").addInputs(arc("p1", "A")).addOutputs(arc("A", "p2")));
 
 		assertThat(petriNet.countEnabledTransitions(), is(equalTo(1)));
 	}

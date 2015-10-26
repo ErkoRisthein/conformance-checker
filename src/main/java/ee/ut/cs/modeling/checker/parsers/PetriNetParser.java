@@ -1,6 +1,7 @@
 package ee.ut.cs.modeling.checker.parsers;
 
 import ee.ut.cs.modeling.checker.domain.petrinet.Arc;
+import ee.ut.cs.modeling.checker.domain.petrinet.Node;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import org.processmining.models.connections.GraphLayoutConnection;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
@@ -17,8 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class PetriNetParser {
 
@@ -62,60 +61,42 @@ public class PetriNetParser {
 
 		PetriNet petriNet = new PetriNet();
 
-		for (Place place : places) {
-			Set<Arc> inputArcs = getInputArcs(net, place);
-			Set<Arc> outputArcs = getOutputArcs(net, place);
-			petriNet.addPlace(
-					new ee.ut.cs.modeling.checker.domain.petrinet.Place(
-							place.getLabel(),
-							inputArcs,
-							outputArcs)
-			);
+		for (Place place : net.getPlaces()) {
+			ee.ut.cs.modeling.checker.domain.petrinet.Place p = new ee.ut.cs.modeling.checker.domain.petrinet.Place(place.getLabel());
+			addInputArcs(net, place, p);
+			addOutputArcs(net, place, p);
+			petriNet.addPlace(p);
 		}
 
-		for (Transition transition : transitions) {
-			Set<Arc> inputArcs = getInputArcs(net, transition);
-			Set<Arc> outputArcs = getOutputArcs(net, transition);
-			petriNet.addTransition(new ee.ut.cs.modeling.checker.domain.petrinet.Transition(
-					transition.getLabel(),
-					inputArcs,
-					outputArcs));
+		for (Transition transition : net.getTransitions()) {
+			ee.ut.cs.modeling.checker.domain.petrinet.Transition t = new ee.ut.cs.modeling.checker.domain.petrinet.Transition(transition.getLabel());
+			addInputArcs(net, transition, t);
+			addOutputArcs(net, transition, t);
+			petriNet.addTransition(t);
 		}
 
 		return petriNet;
 	}
 
+	private void addInputArcs(PetrinetGraph net, PetrinetNode node, Node n) {
 
-	private Set<Arc> nativeArcList(Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> parserArcs) {
-
-		Set<Arc> result = new HashSet<>();
-
-		for (PetrinetEdge arc : parserArcs) {
-			// For some reason getLabel() doesn't work here, using toString().
+		net.getInEdges(node).forEach(arc -> {
 			String from = arc.getSource().toString();
 			String to = arc.getTarget().toString();
-
-			result.add(new Arc(from, to));
-		}
-
-		return result;
-	}
-
-	private Set<Arc> getInputArcs(PetrinetGraph net, PetrinetNode node) {
-
-		Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> arcs = net.getInEdges(node);
-
-		return nativeArcList(arcs);
+			n.addInputs(new Arc(from, to));
+		});
 
 	}
 
+	private void addOutputArcs(PetrinetGraph net, PetrinetNode node, Node n) {
 
-	private Set<Arc> getOutputArcs(PetrinetGraph net, PetrinetNode node) {
-
-		Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> arcs = net.getOutEdges(node);
-
-		return nativeArcList(arcs);
+		net.getOutEdges(node).forEach(arc -> {
+			String from = arc.getSource().toString();
+			String to = arc.getTarget().toString();
+			n.addOutputs(new Arc(from, to));
+		});
 
 	}
+
 
 }

@@ -6,8 +6,6 @@ import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 
-import java.util.Map;
-
 public class ConformanceChecker {
 
 	private PetriNet petriNet;
@@ -36,11 +34,11 @@ public class ConformanceChecker {
 		this.petriNet = petriNet;
 		this.eventLog = eventLog;
 
-		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getTraces().entrySet()) {
-			this.trace = entry.getKey();
-			this.params = entry.getValue();
+		eventLog.forEach((trace, params) -> {
+			this.trace = trace;
+			this.params = params;
 			replayTrace();
-		}
+		});
 
 	}
 
@@ -103,31 +101,27 @@ public class ConformanceChecker {
 	}
 
 	private double calculateFitness() {
-		double aggregatedMissing = 0f;
-		double aggregatedRemaining = 0f;
-		double aggregatedConsumed = 0f;
-		double aggregatedProduced = 0f;
+		double missing = 0;
+		double remaining = 0;
+		double consumed = 0;
+		double produced = 0;
 
-		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getTraces().entrySet()) {
-			TraceParameters params = entry.getValue();
-
-			aggregatedMissing += params.getCount() * params.getMissing();
-			aggregatedRemaining += params.getCount() * params.getRemaining();
-			aggregatedConsumed += params.getCount() * params.getConsumed();
-			aggregatedProduced += params.getCount() * params.getProduced();
+		for (TraceParameters p : eventLog.getTraceParameters()) {
+			missing += p.getCount() * p.getMissing();
+			remaining += p.getCount() * p.getRemaining();
+			consumed += p.getCount() * p.getConsumed();
+			produced += p.getCount() * p.getProduced();
 		}
 
-		return 0.5 * (1 - (aggregatedMissing / aggregatedConsumed)) + 0.5 * (1 - (aggregatedRemaining / aggregatedProduced));
+		return 0.5 * (1 - (missing / consumed)) + 0.5 * (1 - (remaining / produced));
 	}
 
 	private double calculateSimpleBehavioralAppropriateness() {
 		int Tv = petriNet.countTransitions();
-		double sum1 = 0d;
-		double sum2 = 0d;
+		double sum1 = 0;
+		double sum2 = 0;
 
-		for (Map.Entry<Trace, TraceParameters> entry : eventLog.getTraces().entrySet()) {
-			TraceParameters params = entry.getValue();
-
+		for (TraceParameters params : eventLog.getTraceParameters()) {
 			int ni = params.getCount();
 			double xi = params.getMeanEnabledTransitions();
 

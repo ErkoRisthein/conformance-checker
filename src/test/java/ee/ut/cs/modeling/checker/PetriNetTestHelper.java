@@ -1,12 +1,8 @@
 package ee.ut.cs.modeling.checker;
 
-import com.google.common.collect.ImmutableSet;
 import ee.ut.cs.modeling.checker.domain.eventlog.Event;
 import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import ee.ut.cs.modeling.checker.domain.petrinet.Arc;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class PetriNetTestHelper {
 
@@ -18,20 +14,8 @@ public class PetriNetTestHelper {
 		return trace;
 	}
 
-	public static ImmutableSet<Arc> noArc() {
-		return ImmutableSet.of();
-	}
-
-	public static Set<Arc> arcs(String... arcParams) {
-		HashSet<Arc> arcs = new HashSet<>();
-
-		for (int i = 0; i < arcParams.length; i += 2) {
-			String from = arcParams[i];
-			String to = arcParams[i + 1];
-			arcs.add(new Arc(from, to));
-		}
-
-		return arcs;
+	public static Arc arc(String from, String to) {
+		return new Arc(from, to);
 	}
 
 }
