@@ -63,6 +63,6 @@ public class Transition {
 
 	@Override
 	public String toString() {
-		return inputs + "->" + name + "->" + outputs;
+		return name;
 	}
 }
