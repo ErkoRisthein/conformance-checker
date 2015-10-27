@@ -8,7 +8,7 @@ import static org.junit.Assert.assertThat;
 
 public class TraceParametersSpec {
 
-	TraceParameters traceParameters = new TraceParameters();
+	TraceParameters traceParameters = new TraceParameters(0);
 
 	@Test
 	public void meanIs1Point5() {

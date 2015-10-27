@@ -12,6 +12,10 @@ public class TraceParameters {
 	private int produced;
 	private List<Integer> enabledTransitions = new ArrayList<>();
 
+	public TraceParameters(int count) {
+		this.count = count;
+	}
+
 	public int getCount() {
 		return count;
 	}
@@ -30,10 +34,6 @@ public class TraceParameters {
 
 	public int getProduced() {
 		return produced;
-	}
-
-	public void incrementCount() {
-		count++;
 	}
 
 	public void incrementMissing() {
@@ -57,7 +57,7 @@ public class TraceParameters {
 	}
 
 	public double getMeanEnabledTransitions() {
-		double sum = 0d;
+		double sum = 0;
 		for (Integer c : enabledTransitions) {
 			sum += c;
 		}

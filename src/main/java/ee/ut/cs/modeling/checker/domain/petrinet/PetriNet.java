@@ -5,92 +5,56 @@ import com.google.common.base.MoreObjects;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toMap;
+
 public class PetriNet {
 
 	private Map<String, Place> places = new HashMap<>();
 	private Map<String, Transition> transitions = new HashMap<>();
 
 	public void addPlace(Place... places) {
-		for (Place place : places) {
-			this.places.put(place.getName(), place);
-		}
+		this.places.putAll(stream(places).collect(toMap(Place::name, place -> place)));
 	}
 
 	public void addTransition(Transition... transitions) {
-		for (Transition transition : transitions) {
-			this.transitions.put(transition.getName(), transition);
-		}
+		this.transitions.putAll(stream(transitions).collect(toMap(Transition::name, transition -> transition)));
 	}
 
 	public Place getStart() {
-		for (Place place : places.values()) {
-			if (place.getFrom().isEmpty()) {
-				return place;
-			}
-		}
-		return null;
+		return places.values().stream().filter(Place::hasZeroInputs).findFirst().get();
 	}
 
 	public Place getEnd() {
-		for (Place place : places.values()) {
-			if (place.getTo().isEmpty()) {
-				return place;
-			}
-		}
-		return null;
+		return places.values().stream().filter(Place::hasZeroOutputs).findFirst().get();
 	}
 
-	public boolean transitionHasAllInputTokens(String transitionName) {
-		for (Place place : transitions.get(transitionName).getFrom()) {
-			if (!place.hasTokens()) {
-				return false;
-			}
-		}
-		return true;
+	public boolean transitionHasAllInputTokens(Transition transition) {
+		return transition.inputs().stream().allMatch(Place::hasTokens);
 	}
 
-	public void createMissingToken(String transitionName) {
-		for (Place input : transitions.get(transitionName).getFrom()) {
-			if (!input.hasTokens()) {
-				input.addToken();
-			}
-		}
+	public void createMissingToken(Transition transition) {
+		transition.inputs().stream().filter(input -> !input.hasTokens()).forEach(Place::addToken);
 	}
 
-	public void consumeInputTokens(String transitionName) {
-		for (Place input : transitions.get(transitionName).getFrom()) {
-			input.removeToken();
-		}
+	public void consumeInputTokens(Transition transition) {
+		transition.inputs().forEach(Place::removeToken);
 	}
 
-	public void produceOutputTokens(String transitionName) {
-		for (Place output : transitions.get(transitionName).getTo()) {
-			output.addToken();
-		}
+	public void produceOutputTokens(Transition transition) {
+		transition.outputs().forEach(Place::addToken);
 	}
 
 	public int countRemainingTokens() {
-		int count = 0;
-		for (Place place : places.values()) {
-			count += place.getTokenCount();
-		}
-		return count;
+		return places.values().stream().mapToInt(Place::getTokenCount).sum();
 	}
 
 	public void cleanUpRemainingTokens() {
-		for (Place place : places.values()) {
-			place.removeAllTokens();
-		}
+		places.values().forEach(Place::removeAllTokens);
 	}
 
 	public int countEnabledTransitions() {
-		int count = 0;
-		for (Place place : places.values()) {
-			if (place.hasTokens()) {
-				count += place.getOutputCount();
-			}
-		}
-		return count;
+		return places.values().stream().filter(Place::hasTokens).mapToInt(Place::getOutputCount).sum();
 	}
 
 	public int countTransitions() {
@@ -117,19 +81,19 @@ public class PetriNet {
 		getEnd().addToken();
 	}
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("places", places)
-				.add("transitions", transitions)
-				.toString();
-	}
-
 	public Transition getTransition(String name) {
 		return transitions.get(name) != null ? transitions.get(name) : Transition.NULL;
 	}
 
 	public Place getPlace(String name) {
 		return places.get(name) != null ? places.get(name) : Place.NULL;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("places", places)
+				.add("transitions", transitions)
+				.toString();
 	}
 }

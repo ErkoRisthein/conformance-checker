@@ -16,11 +16,11 @@ public class PetriNetParserSpec {
 	public void testPetriNetEndAndStartParsing() {
 		PetriNet petriNet = petriNetParser.getPetriNetFromFile("test.pnml");
 
-		Place expectedStart = new Place("p1");
-		Place expectedEnd = new Place("p5");
+		Place p1 = new Place("p1");
+		Place p5 = new Place("p5");
 
-		assertThat(petriNet.getStart(), is(equalTo(expectedStart)));
-		assertThat(petriNet.getEnd(), is(equalTo(expectedEnd)));
+		assertThat(petriNet.getStart(), is(equalTo(p1)));
+		assertThat(petriNet.getEnd(), is(equalTo(p5)));
 		assertThat(petriNet.countPlaces(), is(equalTo(5)));
 		assertThat(petriNet.countTransitions(), is(equalTo(5)));
 

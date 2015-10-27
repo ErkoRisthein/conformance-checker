@@ -5,39 +5,49 @@ import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
 import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 import ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
+import ee.ut.cs.modeling.checker.domain.petrinet.Transition;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConformanceChecker {
 
 	private PetriNet petriNet;
 	private EventLog eventLog;
+	private Map<Trace, TraceParameters> traceToParams = new HashMap<>();
+
 	private Trace trace;
 	private TraceParameters params;
-	private String transitionName;
+	private Transition transition;
 
-	public double getFitness(PetriNet petriNet, EventLog eventLog) {
-		replayLog(petriNet, eventLog);
+	public ConformanceChecker(PetriNet petriNet, EventLog eventLog) {
+		this.petriNet = petriNet;
+		this.eventLog = eventLog;
+	}
+
+	public double getFitness() {
+		replayLog();
 		return calculateFitness();
 	}
 
-	public double getSimpleBehavioralAppropriateness(PetriNet petriNet, EventLog eventLog) {
-		replayLog(petriNet, eventLog);
+	public double getSimpleBehavioralAppropriateness() {
+		replayLog();
 		return calculateSimpleBehavioralAppropriateness();
 	}
 
-	public double getSimpleStructuralAppropriateness(PetriNet petriNet) {
+	public double getSimpleStructuralAppropriateness() {
 		double L = petriNet.countTransitions();
 		double N = L + petriNet.countPlaces();
 		return (L + 2) / N;
 	}
 
-	void replayLog(PetriNet petriNet, EventLog eventLog) {
-		this.petriNet = petriNet;
-		this.eventLog = eventLog;
-
-		eventLog.forEach((trace, params) -> {
+	void replayLog() {
+		eventLog.forEach((trace, count) -> {
 			this.trace = trace;
-			this.params = params;
+			this.params = new TraceParameters(count);
 			replayTrace();
+			traceToParams.put(this.trace, this.params);
 		});
 
 	}
@@ -66,7 +76,7 @@ public class ConformanceChecker {
 
 	private void replayEvents() {
 		for (Event event : trace.getTrace()) {
-			this.transitionName = event.getName();
+			this.transition = petriNet.getTransition(event.getName());
 			addEnabledTransition();
 			createMissingTokensIfNeeded();
 			consumeInputTokens();
@@ -79,19 +89,19 @@ public class ConformanceChecker {
 	}
 
 	private void createMissingTokensIfNeeded() {
-		if (!petriNet.transitionHasAllInputTokens(transitionName)) {
-			petriNet.createMissingToken(transitionName);
+		if (!petriNet.transitionHasAllInputTokens(transition)) {
+			petriNet.createMissingToken(transition);
 			params.incrementMissing();
 		}
 	}
 
 	private void produceOutputTokens() {
-		petriNet.produceOutputTokens(transitionName);
+		petriNet.produceOutputTokens(transition);
 		params.incrementProduced();
 	}
 
 	private void consumeInputTokens() {
-		petriNet.consumeInputTokens(transitionName);
+		petriNet.consumeInputTokens(transition);
 		params.incrementConsumed();
 	}
 
@@ -106,7 +116,7 @@ public class ConformanceChecker {
 		double consumed = 0;
 		double produced = 0;
 
-		for (TraceParameters p : eventLog.getTraceParameters()) {
+		for (TraceParameters p : getTraceParameters()) {
 			missing += p.getCount() * p.getMissing();
 			remaining += p.getCount() * p.getRemaining();
 			consumed += p.getCount() * p.getConsumed();
@@ -121,7 +131,7 @@ public class ConformanceChecker {
 		double sum1 = 0;
 		double sum2 = 0;
 
-		for (TraceParameters params : eventLog.getTraceParameters()) {
+		for (TraceParameters params : getTraceParameters()) {
 			int ni = params.getCount();
 			double xi = params.getMeanEnabledTransitions();
 
@@ -130,5 +140,13 @@ public class ConformanceChecker {
 		}
 
 		return sum1 / ((Tv - 1) * sum2);
+	}
+
+	private Collection<TraceParameters> getTraceParameters() {
+		return traceToParams.values();
+	}
+
+	TraceParameters getTraceParameters(Trace trace) {
+		return traceToParams.get(trace);
 	}
 }

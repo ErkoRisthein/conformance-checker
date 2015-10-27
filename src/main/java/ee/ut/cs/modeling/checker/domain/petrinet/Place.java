@@ -4,44 +4,46 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Collections.addAll;
+
 public class Place {
 
 	public static final Place NULL = new Place("null");
 
 	private final String name;
-	private Set<Transition> from = new HashSet<>();
-	private Set<Transition> to = new HashSet<>();
+	private Set<Transition> inputs = new HashSet<>();
+	private Set<Transition> outputs = new HashSet<>();
 	private int tokens;
 
 	public Place(String name) {
 		this.name = name;
 	}
 
-	public String getName() {
+	public String name() {
 		return name;
 	}
 
 
-	public Place from(Transition transition) {
-		from.add(transition);
+	public Place from(Transition... transitions) {
+		addAll(inputs, transitions);
 		return this;
 	}
 
-	public Place to(Transition transition) {
-		to.add(transition);
+	public Place to(Transition... transitions) {
+		addAll(outputs, transitions);
 		return this;
 	}
 
-	public Set<Transition> getFrom() {
-		return from;
+	public boolean hasZeroInputs() {
+		return inputs.isEmpty();
 	}
 
-	public Set<Transition> getTo() {
-		return to;
+	public boolean hasZeroOutputs() {
+		return outputs.isEmpty();
 	}
 
 	public int getOutputCount() {
-		return to.size();
+		return outputs.size();
 	}
 
 	public int getTokenCount() {
@@ -79,6 +81,6 @@ public class Place {
 
 	@Override
 	public String toString() {
-		return from + "->" + name + "(" + tokens + ")->" + to;
+		return inputs + "->" + name + "(" + tokens + ")->" + outputs;
 	}
 }

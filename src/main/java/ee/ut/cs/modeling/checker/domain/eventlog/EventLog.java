@@ -1,39 +1,33 @@
 package ee.ut.cs.modeling.checker.domain.eventlog;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class EventLog {
 
-	private Map<Trace, TraceParameters> traces = new HashMap<>();
+	private Map<Trace, Integer> traceCounts = new HashMap<>();
 
 	public void addTrace(Trace trace) {
-		traces.put(trace, incrementCount(trace));
+		traceCounts.put(trace, incrementCount(trace));
 	}
 
-	private TraceParameters incrementCount(Trace trace) {
-		TraceParameters params = traces.get(trace);
-		params = (params == null) ? new TraceParameters() : params;
-		params.incrementCount();
-		return params;
+	public Integer getCount(Trace trace) {
+		return traceCounts.get(trace);
 	}
 
-	public TraceParameters getTraceParameters(Trace trace) {
-		return traces.get(trace);
+	public void forEach(BiConsumer<Trace, Integer> action) {
+		traceCounts.forEach(action);
 	}
 
-	public Collection<TraceParameters> getTraceParameters() {
-		return traces.values();
-	}
-
-	public void forEach(BiConsumer<Trace, TraceParameters> action) {
-		traces.forEach(action);
+	private Integer incrementCount(Trace trace) {
+		Integer count = traceCounts.get(trace);
+		count = (count == null) ? 0 : count;
+		return ++count;
 	}
 
 	@Override
 	public String toString() {
-		return traces.toString();
+		return traceCounts.toString();
 	}
 }

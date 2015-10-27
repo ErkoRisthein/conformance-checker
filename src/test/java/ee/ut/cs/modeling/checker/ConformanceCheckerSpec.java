@@ -19,13 +19,11 @@ import static org.hamcrest.number.IsCloseTo.closeTo;
 
 public class ConformanceCheckerSpec {
 
-	ConformanceChecker conformanceChecker;
 	EventLogParser eventLogParser;
 	PetriNetParser petriNetParser;
 
 	@Before
 	public void setUp() {
-		conformanceChecker = new ConformanceChecker();
 		eventLogParser = new EventLogParser();
 		petriNetParser = new PetriNetParser();
 	}
@@ -55,7 +53,8 @@ public class ConformanceCheckerSpec {
 		PetriNet petriNet = generateMultiInputPetriNet();
 		EventLog eventLog = generateAbEventLog();
 
-		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
+		ConformanceChecker conformanceChecker = new ConformanceChecker(petriNet, eventLog);
+		double fitness = conformanceChecker.getFitness();
 
 		assertThat(fitness, is(equalTo(1d)));
 	}
@@ -65,7 +64,8 @@ public class ConformanceCheckerSpec {
 		PetriNet petriNet = getTestPetriNet();
 		EventLog eventLog = getEventLog("test.xes");
 
-		double sba = conformanceChecker.getSimpleBehavioralAppropriateness(petriNet, eventLog);
+		ConformanceChecker conformanceChecker = new ConformanceChecker(petriNet, eventLog);
+		double sba = conformanceChecker.getSimpleBehavioralAppropriateness();
 
 		assertThat(sba, is(closeTo(0.9236111, 0.0000001)));
 	}
@@ -74,7 +74,8 @@ public class ConformanceCheckerSpec {
 	public void getSimpleStructuralAppropriateness() {
 		PetriNet petriNet = getTestPetriNet();
 
-		double ssa = conformanceChecker.getSimpleStructuralAppropriateness(petriNet);
+		ConformanceChecker conformanceChecker = new ConformanceChecker(petriNet, null);
+		double ssa = conformanceChecker.getSimpleStructuralAppropriateness();
 
 		assertThat(ssa, is(equalTo(0.7)));
 	}
@@ -83,12 +84,13 @@ public class ConformanceCheckerSpec {
 		PetriNet petriNet = getTestPetriNet();
 		EventLog eventLog = getEventLog(eventLogFilename);
 
-		conformanceChecker.replayLog(petriNet, eventLog);
+		ConformanceChecker conformanceChecker = new ConformanceChecker(petriNet, eventLog);
+		conformanceChecker.replayLog();
 
-		TraceParameters abcdParams = eventLog.getTraceParameters(trace("A", "B", "C", "D"));
+		TraceParameters abcdParams = conformanceChecker.getTraceParameters(trace("A", "B", "C", "D"));
 		assertParams(abcdParams, 0, 0, 5, 5, 3);
 
-		TraceParameters abeParams = eventLog.getTraceParameters(trace("A", "B", "E"));
+		TraceParameters abeParams = conformanceChecker.getTraceParameters(trace("A", "B", "E"));
 		assertParams(abeParams, 0, 0, 4, 4, 6);
 	}
 
@@ -112,7 +114,8 @@ public class ConformanceCheckerSpec {
 		PetriNet petriNet = getTestPetriNet();
 		EventLog eventLog = getEventLog(eventLogFilename);
 
-		double fitness = conformanceChecker.getFitness(petriNet, eventLog);
+		ConformanceChecker conformanceChecker = new ConformanceChecker(petriNet, eventLog);
+		double fitness = conformanceChecker.getFitness();
 
 		assertThat(fitness, is(equalTo(expectedFitness)));
 	}

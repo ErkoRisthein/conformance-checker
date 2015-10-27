@@ -1,43 +1,43 @@
 package ee.ut.cs.modeling.checker.domain.petrinet;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import static java.util.Collections.addAll;
 
 public class Transition {
 
 	public static final Transition NULL = new Transition("null");
 
 	private final String name;
-	private Set<Place> from = new HashSet<>();
-	private Set<Place> to = new HashSet<>();
+	private Set<Place> inputs = new HashSet<>();
+	private Set<Place> outputs = new HashSet<>();
 
 	public Transition(String name) {
 		this.name = name;
 	}
 
-	public String getName() {
+	public String name() {
 		return name;
 	}
 
-
 	public Transition from(Place... places) {
-		Collections.addAll(from, places);
+		addAll(inputs, places);
 		return this;
 	}
 
 	public Transition to(Place... places) {
-		Collections.addAll(to, places);
+		addAll(outputs, places);
 		return this;
 	}
 
-	public Set<Place> getFrom() {
-		return from;
+	public Set<Place> inputs() {
+		return inputs;
 	}
 
-	public Set<Place> getTo() {
-		return to;
+	public Set<Place> outputs() {
+		return outputs;
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class Transition {
 
 	@Override
 	public String toString() {
-		return from + "->" + name + "->" + to;
+		return inputs + "->" + name + "->" + outputs;
 	}
 
 }
