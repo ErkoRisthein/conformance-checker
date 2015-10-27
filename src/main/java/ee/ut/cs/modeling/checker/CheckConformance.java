@@ -14,6 +14,7 @@ public class CheckConformance {
 		options.addOption("p", "petrinet", true, "petrinet input filename");
 		options.addOption("e", "eventlog", true, "eventlog input filename");
 
+
 		try {
 			CommandLine line = parser.parse(options, args);
 
@@ -33,7 +34,8 @@ public class CheckConformance {
 				System.out.println("Simple Structural Appropriateness: " + ssa);
 			} else {
 				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp("java CheckConformance", options);
+				formatter.printHelp("java CheckConformance", "Petri net conformance checker.",
+						options, "", true);
 			}
 		} catch (ParseException exp) {
 			System.out.println("Unexpected exception:" + exp.getMessage());
