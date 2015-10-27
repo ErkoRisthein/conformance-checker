@@ -89,19 +89,19 @@ public class ConformanceChecker {
 	}
 
 	private void createMissingTokensIfNeeded() {
-		if (!petriNet.transitionHasAllInputTokens(transition)) {
-			petriNet.createMissingToken(transition);
+		if (!transition.hasAllInputTokens()) {
+			transition.createMissingToken();
 			params.incrementMissing();
 		}
 	}
 
 	private void produceOutputTokens() {
-		petriNet.produceOutputTokens(transition);
+		transition.produceOutputTokens();
 		params.incrementProduced();
 	}
 
 	private void consumeInputTokens() {
-		petriNet.consumeInputTokens(transition);
+		transition.consumeInputTokens();
 		params.incrementConsumed();
 	}
 

@@ -32,12 +32,20 @@ public class Transition {
 		return this;
 	}
 
-	public Set<Place> inputs() {
-		return inputs;
+	public void consumeInputTokens() {
+		inputs.forEach(Place::removeToken);
 	}
 
-	public Set<Place> outputs() {
-		return outputs;
+	public void produceOutputTokens() {
+		outputs.forEach(Place::addToken);
+	}
+
+	public void createMissingToken() {
+		inputs.stream().filter(input -> !input.hasTokens()).forEach(Place::addToken);
+	}
+
+	public boolean hasAllInputTokens() {
+		return inputs.stream().allMatch(Place::hasTokens);
 	}
 
 	@Override
@@ -57,5 +65,4 @@ public class Transition {
 	public String toString() {
 		return inputs + "->" + name + "->" + outputs;
 	}
-
 }

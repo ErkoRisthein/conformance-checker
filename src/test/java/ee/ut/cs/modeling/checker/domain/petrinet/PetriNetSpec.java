@@ -21,7 +21,7 @@ public class PetriNetSpec {
 		petriNet.addPlace(p1);
 		petriNet.addTransition(a);
 
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(false)));
+		assertThat(a.hasAllInputTokens(), is(equalTo(false)));
 	}
 
 	@Test
@@ -39,7 +39,7 @@ public class PetriNetSpec {
 
 		p1.addToken();
 
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(true)));
+		assertThat(a.hasAllInputTokens(), is(equalTo(true)));
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class PetriNetSpec {
 		p1.addToken();
 		p2.addToken();
 
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(true)));
+		assertThat(a.hasAllInputTokens(), is(equalTo(true)));
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class PetriNetSpec {
 
 		p1.addToken();
 
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(false)));
+		assertThat(a.hasAllInputTokens(), is(equalTo(false)));
 	}
 
 	@Test
@@ -96,9 +96,9 @@ public class PetriNetSpec {
 		petriNet.addPlace(p1);
 		petriNet.addTransition(a);
 
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(false)));
-		petriNet.createMissingToken(a);
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(true)));
+		assertThat(a.hasAllInputTokens(), is(equalTo(false)));
+		a.createMissingToken();
+		assertThat(a.hasAllInputTokens(), is(equalTo(true)));
 	}
 
 	@Test
@@ -116,9 +116,9 @@ public class PetriNetSpec {
 
 		p1.addToken();
 
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(true)));
-		petriNet.consumeInputTokens(a);
-		assertThat(petriNet.transitionHasAllInputTokens(a), is(equalTo(false)));
+		assertThat(a.hasAllInputTokens(), is(equalTo(true)));
+		a.consumeInputTokens();
+		assertThat(a.hasAllInputTokens(), is(equalTo(false)));
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class PetriNetSpec {
 		petriNet.addTransition(a);
 
 		assertThat(p2.hasTokens(), is(equalTo(false)));
-		petriNet.produceOutputTokens(a);
+		a.produceOutputTokens();
 		assertThat(p2.hasTokens(), is(equalTo(true)));
 	}
 

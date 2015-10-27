@@ -29,22 +29,6 @@ public class PetriNet {
 		return places.values().stream().filter(Place::hasZeroOutputs).findFirst().get();
 	}
 
-	public boolean transitionHasAllInputTokens(Transition transition) {
-		return transition.inputs().stream().allMatch(Place::hasTokens);
-	}
-
-	public void createMissingToken(Transition transition) {
-		transition.inputs().stream().filter(input -> !input.hasTokens()).forEach(Place::addToken);
-	}
-
-	public void consumeInputTokens(Transition transition) {
-		transition.inputs().forEach(Place::removeToken);
-	}
-
-	public void produceOutputTokens(Transition transition) {
-		transition.outputs().forEach(Place::addToken);
-	}
-
 	public int countRemainingTokens() {
 		return places.values().stream().mapToInt(Place::getTokenCount).sum();
 	}
