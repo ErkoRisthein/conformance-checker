@@ -1,25 +1,20 @@
 package ee.ut.cs.modeling.checker;
 
+import ee.ut.cs.modeling.checker.domain.conformance.ConformanceParameters;
 import ee.ut.cs.modeling.checker.domain.eventlog.Event;
 import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
 import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
-import ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.domain.petrinet.Transition;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConformanceChecker {
 
 	private PetriNet petriNet;
 	private EventLog eventLog;
-	private Map<Trace, TraceParameters> traceToParams = new HashMap<>();
-
-	private Trace trace;
-	private TraceParameters params;
-	private Transition transition;
+	List<ConformanceParameters> conformanceParams = new ArrayList<>();
 
 	public ConformanceChecker(PetriNet petriNet, EventLog eventLog) {
 		this.petriNet = petriNet;
@@ -44,28 +39,27 @@ public class ConformanceChecker {
 
 	void replayLog() {
 		eventLog.forEach((trace, count) -> {
-			this.trace = trace;
-			this.params = new TraceParameters(count);
-			replayTrace();
-			traceToParams.put(this.trace, this.params);
+			ConformanceParameters params = new ConformanceParameters(trace, count);
+			replay(trace, params);
+			conformanceParams.add(params);
 		});
 
 	}
 
-	private void replayTrace() {
-		addStartToken();
-		replayEvents();
-		consumeEndToken();
-		setRemainingTokens();
+	private void replay(Trace trace, ConformanceParameters params) {
+		addStartToken(params);
+		replayEvents(trace, params);
+		consumeEndToken(params);
+		setRemainingTokens(params);
 	}
 
-	private void setRemainingTokens() {
+	private void setRemainingTokens(ConformanceParameters params) {
 		int remainingTokens = petriNet.countRemainingTokens();
 		params.setRemaining(remainingTokens);
 		petriNet.cleanUpRemainingTokens();
 	}
 
-	private void consumeEndToken() {
+	private void consumeEndToken(ConformanceParameters params) {
 		if (!petriNet.hasEndToken()) {
 			petriNet.addEndToken();
 			params.incrementMissing();
@@ -74,38 +68,38 @@ public class ConformanceChecker {
 		params.incrementConsumed();
 	}
 
-	private void replayEvents() {
+	private void replayEvents(Trace trace, ConformanceParameters params) {
 		for (Event event : trace.getTrace()) {
-			this.transition = petriNet.getTransition(event.getName());
-			addEnabledTransition();
-			createMissingTokensIfNeeded();
-			consumeInputTokens();
-			produceOutputTokens();
+			Transition transition = petriNet.getTransition(event.name());
+			addEnabledTransition(params);
+			createMissingTokensIfNeeded(transition, params);
+			consumeInputTokens(transition, params);
+			produceOutputTokens(transition, params);
 		}
 	}
 
-	private void addEnabledTransition() {
+	private void addEnabledTransition(ConformanceParameters params) {
 		params.addEnabledTransition(petriNet.countEnabledTransitions());
 	}
 
-	private void createMissingTokensIfNeeded() {
+	private void createMissingTokensIfNeeded(Transition transition, ConformanceParameters params) {
 		if (!transition.hasAllInputTokens()) {
 			transition.createMissingToken();
 			params.incrementMissing();
 		}
 	}
 
-	private void produceOutputTokens() {
+	private void produceOutputTokens(Transition transition, ConformanceParameters params) {
 		transition.produceOutputTokens();
 		params.incrementProduced();
 	}
 
-	private void consumeInputTokens() {
+	private void consumeInputTokens(Transition transition, ConformanceParameters params) {
 		transition.consumeInputTokens();
 		params.incrementConsumed();
 	}
 
-	private void addStartToken() {
+	private void addStartToken(ConformanceParameters params) {
 		petriNet.addStartToken();
 		params.incrementProduced();
 	}
@@ -116,7 +110,7 @@ public class ConformanceChecker {
 		double consumed = 0;
 		double produced = 0;
 
-		for (TraceParameters p : getTraceParameters()) {
+		for (ConformanceParameters p : conformanceParams) {
 			missing += p.getCount() * p.getMissing();
 			remaining += p.getCount() * p.getRemaining();
 			consumed += p.getCount() * p.getConsumed();
@@ -131,9 +125,9 @@ public class ConformanceChecker {
 		double sum1 = 0;
 		double sum2 = 0;
 
-		for (TraceParameters params : getTraceParameters()) {
-			int ni = params.getCount();
-			double xi = params.getMeanEnabledTransitions();
+		for (ConformanceParameters p : conformanceParams) {
+			int ni = p.getCount();
+			double xi = p.getMeanEnabledTransitions();
 
 			sum1 += ni * (Tv - xi);
 			sum2 += ni;
@@ -142,11 +136,5 @@ public class ConformanceChecker {
 		return sum1 / ((Tv - 1) * sum2);
 	}
 
-	private Collection<TraceParameters> getTraceParameters() {
-		return traceToParams.values();
-	}
 
-	TraceParameters getTraceParameters(Trace trace) {
-		return traceToParams.get(trace);
-	}
 }

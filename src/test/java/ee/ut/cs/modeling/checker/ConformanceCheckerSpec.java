@@ -1,7 +1,7 @@
 package ee.ut.cs.modeling.checker;
 
+import ee.ut.cs.modeling.checker.domain.conformance.ConformanceParameters;
 import ee.ut.cs.modeling.checker.domain.eventlog.EventLog;
-import ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters;
 import ee.ut.cs.modeling.checker.domain.petrinet.PetriNet;
 import ee.ut.cs.modeling.checker.domain.petrinet.Place;
 import ee.ut.cs.modeling.checker.domain.petrinet.Transition;
@@ -30,7 +30,7 @@ public class ConformanceCheckerSpec {
 
 	@Test
 	public void replayDefaultLog() {
-		replayLog("test.xes");
+		replayEventLog("test.xes");
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class ConformanceCheckerSpec {
 
 	@Test
 	public void replayExtraLog() {
-		replayLog("test_extra.xes");
+		replayEventLog("test_extra.xes");
 	}
 
 	@Test
@@ -80,17 +80,19 @@ public class ConformanceCheckerSpec {
 		assertThat(ssa, is(equalTo(0.7)));
 	}
 
-	private void replayLog(String eventLogFilename) {
+	private void replayEventLog(String fileName) {
 		PetriNet petriNet = getTestPetriNet();
-		EventLog eventLog = getEventLog(eventLogFilename);
+		EventLog eventLog = getEventLog(fileName);
 
 		ConformanceChecker conformanceChecker = new ConformanceChecker(petriNet, eventLog);
 		conformanceChecker.replayLog();
 
-		TraceParameters abcdParams = conformanceChecker.getTraceParameters(trace("A", "B", "C", "D"));
-		assertParams(abcdParams, 0, 0, 5, 5, 3);
+		ConformanceParameters abcdParams = conformanceChecker.conformanceParams.stream()
+				.filter(p -> p.getTrace().equals(trace("A", "B", "C", "D"))).findFirst().get();
+		ConformanceParameters abeParams = conformanceChecker.conformanceParams.stream()
+				.filter(p -> p.getTrace().equals(trace("A", "B", "E"))).findFirst().get();
 
-		TraceParameters abeParams = conformanceChecker.getTraceParameters(trace("A", "B", "E"));
+		assertParams(abcdParams, 0, 0, 5, 5, 3);
 		assertParams(abeParams, 0, 0, 4, 4, 6);
 	}
 
@@ -102,12 +104,12 @@ public class ConformanceCheckerSpec {
 		return eventLogParser.getEventLogFromFile(fileName);
 	}
 
-	private void assertParams(TraceParameters traceParameters, int missing, int remaining, int consumed, int produced, int count) {
-		assertThat(traceParameters.getMissing(), is(equalTo(missing)));
-		assertThat(traceParameters.getRemaining(), is(equalTo(remaining)));
-		assertThat(traceParameters.getConsumed(), is(equalTo(consumed)));
-		assertThat(traceParameters.getProduced(), is(equalTo(produced)));
-		assertThat(traceParameters.getCount(), is(equalTo(count)));
+	private void assertParams(ConformanceParameters p, int missing, int remaining, int consumed, int produced, int count) {
+		assertThat(p.getMissing(), is(equalTo(missing)));
+		assertThat(p.getRemaining(), is(equalTo(remaining)));
+		assertThat(p.getConsumed(), is(equalTo(consumed)));
+		assertThat(p.getProduced(), is(equalTo(produced)));
+		assertThat(p.getCount(), is(equalTo(count)));
 	}
 
 	private void assertFitness(String eventLogFilename, double expectedFitness) {

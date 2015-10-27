@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="512.6808318264016" y="156.3164556962025">ee.ut.cs.modeling.checker.domain.eventlog.Trace</node>
+    <node x="805.1103074141047" y="155.65370705244126">ee.ut.cs.modeling.checker.domain.eventlog.Event</node>
+    <node x="-333.9457504520795" y="456.18264014466536">ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters</node>
+    <node x="501.5284810126583" y="577.3254972875226">ee.ut.cs.modeling.checker.domain.petrinet.Place</node>
+    <node x="46.066907775768414" y="156.63019891500903">ee.ut.cs.modeling.checker.domain.eventlog.EventLog</node>
+    <node x="56.07233273056053" y="464.12115732368886">ee.ut.cs.modeling.checker.domain.petrinet.PetriNet</node>
+    <node x="-332.1532549728753" y="131.7323688969258">ee.ut.cs.modeling.checker.ConformanceChecker</node>
+    <node x="493.73236889692566" y="315.23327305605784">ee.ut.cs.modeling.checker.domain.petrinet.Transition</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="ee.ut.cs.modeling.checker.domain.petrinet.Place" target="ee.ut.cs.modeling.checker.domain.petrinet.Transition">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.ConformanceChecker" target="ee.ut.cs.modeling.checker.domain.petrinet.PetriNet">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.ConformanceChecker" target="ee.ut.cs.modeling.checker.domain.eventlog.TraceParameters">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.domain.petrinet.Transition" target="ee.ut.cs.modeling.checker.domain.petrinet.Place">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.domain.eventlog.EventLog" target="ee.ut.cs.modeling.checker.domain.eventlog.Trace">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.ConformanceChecker" target="ee.ut.cs.modeling.checker.domain.eventlog.EventLog">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.domain.eventlog.Trace" target="ee.ut.cs.modeling.checker.domain.eventlog.Event">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.domain.petrinet.PetriNet" target="ee.ut.cs.modeling.checker.domain.petrinet.Transition">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ee.ut.cs.modeling.checker.domain.petrinet.PetriNet" target="ee.ut.cs.modeling.checker.domain.petrinet.Place">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.6947236180904522" x="432.5623869801085" y="468.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

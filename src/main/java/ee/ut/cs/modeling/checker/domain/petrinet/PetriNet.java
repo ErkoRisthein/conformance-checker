@@ -21,11 +21,11 @@ public class PetriNet {
 		this.transitions.putAll(stream(transitions).collect(toMap(Transition::name, transition -> transition)));
 	}
 
-	public Place getStart() {
+	public Place start() {
 		return places.values().stream().filter(Place::hasZeroInputs).findFirst().get();
 	}
 
-	public Place getEnd() {
+	public Place end() {
 		return places.values().stream().filter(Place::hasZeroOutputs).findFirst().get();
 	}
 
@@ -50,19 +50,19 @@ public class PetriNet {
 	}
 
 	public void addStartToken() {
-		getStart().addToken();
+		start().addToken();
 	}
 
 	public boolean hasEndToken() {
-		return getEnd().hasTokens();
+		return end().hasTokens();
 	}
 
 	public void removeEndToken() {
-		getEnd().removeToken();
+		end().removeToken();
 	}
 
 	public void addEndToken() {
-		getEnd().addToken();
+		end().addToken();
 	}
 
 	public Transition getTransition(String name) {

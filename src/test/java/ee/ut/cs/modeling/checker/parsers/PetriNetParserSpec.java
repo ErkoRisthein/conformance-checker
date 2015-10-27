@@ -19,8 +19,8 @@ public class PetriNetParserSpec {
 		Place p1 = new Place("p1");
 		Place p5 = new Place("p5");
 
-		assertThat(petriNet.getStart(), is(equalTo(p1)));
-		assertThat(petriNet.getEnd(), is(equalTo(p5)));
+		assertThat(petriNet.start(), is(equalTo(p1)));
+		assertThat(petriNet.end(), is(equalTo(p5)));
 		assertThat(petriNet.countPlaces(), is(equalTo(5)));
 		assertThat(petriNet.countTransitions(), is(equalTo(5)));
 

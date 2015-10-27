@@ -1,10 +1,13 @@
-package ee.ut.cs.modeling.checker.domain.eventlog;
+package ee.ut.cs.modeling.checker.domain.conformance;
+
+import ee.ut.cs.modeling.checker.domain.eventlog.Trace;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TraceParameters {
+public class ConformanceParameters {
 
+	private Trace trace;
 	private int count;
 	private int missing;
 	private int remaining;
@@ -12,8 +15,13 @@ public class TraceParameters {
 	private int produced;
 	private List<Integer> enabledTransitions = new ArrayList<>();
 
-	public TraceParameters(int count) {
+	public ConformanceParameters(Trace trace, int count) {
+		this.trace = trace;
 		this.count = count;
+	}
+
+	public Trace getTrace() {
+		return trace;
 	}
 
 	public int getCount() {
