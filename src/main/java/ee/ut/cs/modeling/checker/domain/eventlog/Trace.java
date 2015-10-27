@@ -3,17 +3,18 @@ package ee.ut.cs.modeling.checker.domain.eventlog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class Trace {
 
 	private List<Event> trace = new ArrayList<>();
 
-	public List<Event> getTrace() {
-		return trace;
-	}
-
 	public void addEvent(Event event) {
 		trace.add(event);
+	}
+
+	public void forEach(Consumer<Event> action) {
+		trace.forEach(action);
 	}
 
 	@Override

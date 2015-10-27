@@ -88,9 +88,9 @@ public class ConformanceCheckerSpec {
 		conformanceChecker.replayLog();
 
 		ConformanceParameters abcdParams = conformanceChecker.conformanceParams.stream()
-				.filter(p -> p.getTrace().equals(trace("A", "B", "C", "D"))).findFirst().get();
+				.filter(p -> p.trace().equals(trace("A", "B", "C", "D"))).findFirst().get();
 		ConformanceParameters abeParams = conformanceChecker.conformanceParams.stream()
-				.filter(p -> p.getTrace().equals(trace("A", "B", "E"))).findFirst().get();
+				.filter(p -> p.trace().equals(trace("A", "B", "E"))).findFirst().get();
 
 		assertParams(abcdParams, 0, 0, 5, 5, 3);
 		assertParams(abeParams, 0, 0, 4, 4, 6);
@@ -105,11 +105,11 @@ public class ConformanceCheckerSpec {
 	}
 
 	private void assertParams(ConformanceParameters p, int missing, int remaining, int consumed, int produced, int count) {
-		assertThat(p.getMissing(), is(equalTo(missing)));
-		assertThat(p.getRemaining(), is(equalTo(remaining)));
-		assertThat(p.getConsumed(), is(equalTo(consumed)));
-		assertThat(p.getProduced(), is(equalTo(produced)));
-		assertThat(p.getCount(), is(equalTo(count)));
+		assertThat(p.missing(), is(equalTo(missing)));
+		assertThat(p.remaining(), is(equalTo(remaining)));
+		assertThat(p.consumed(), is(equalTo(consumed)));
+		assertThat(p.produced(), is(equalTo(produced)));
+		assertThat(p.count(), is(equalTo(count)));
 	}
 
 	private void assertFitness(String eventLogFilename, double expectedFitness) {

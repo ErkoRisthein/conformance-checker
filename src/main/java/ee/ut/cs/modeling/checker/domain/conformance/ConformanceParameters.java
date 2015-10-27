@@ -20,27 +20,27 @@ public class ConformanceParameters {
 		this.count = count;
 	}
 
-	public Trace getTrace() {
+	public Trace trace() {
 		return trace;
 	}
 
-	public int getCount() {
+	public int count() {
 		return count;
 	}
 
-	public int getMissing() {
+	public int missing() {
 		return missing;
 	}
 
-	public int getRemaining() {
+	public int remaining() {
 		return remaining;
 	}
 
-	public int getConsumed() {
+	public int consumed() {
 		return consumed;
 	}
 
-	public int getProduced() {
+	public int produced() {
 		return produced;
 	}
 
